@@ -26,7 +26,7 @@ export default async function Home() {
                                 <Link className="nav-link" href={"/kanban"}>Kanban</Link>
                             </li>
                         </ul>
-                        <Image alt="profile" src={profile} width={50} height={50} />
+                        <Image alt="profile" src={profile} width={40} height={40} />
                     </div>
                 </div>
             </nav>
