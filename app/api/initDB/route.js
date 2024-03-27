@@ -4,6 +4,7 @@ import Board from '@/models/Board';
 import User from '@/models/User';
 import Status from '@/models/Status';
 import Subtask from '@/models/Subtask';
+import Message from '@/models/Message';
 import { NextResponse } from 'next/server';
 
 export async function GET(request)
@@ -14,6 +15,7 @@ export async function GET(request)
     await User.deleteMany();
     await Status.deleteMany();
     await Subtask.deleteMany();
+    await Message.deleteMany();
 
     let board  = new Board;
     board.name = 'Канбан';
@@ -88,6 +90,34 @@ export async function GET(request)
     subtask.name = 'Не сломать API';
     subtask.done = false;
     await subtask.save();
+
+    let message = new Message;
+    message.board = kanban._id;
+    message.author = users[0]._id;
+    message.index = 0;
+    message.text = 'Привет';
+    await message.save();
+
+    message = new Message;
+    message.board = kanban._id;
+    message.author = users[1]._id;
+    message.index = 1;
+    message.text = 'Здарова';
+    await message.save();
+
+    message = new Message;
+    message.board = kanban._id;
+    message.author = users[0]._id;
+    message.index = 2;
+    message.text = 'Пока';
+    await message.save();
+
+    message = new Message;
+    message.board = kanban._id;
+    message.author = users[1]._id;
+    message.index = 3;
+    message.text = 'И тебе того же';
+    await message.save();
 
     return (NextResponse.json({
         'message': 'в монгу все запихано'
