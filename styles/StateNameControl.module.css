@@ -1,0 +1,35 @@
+.input {
+    width: 300px;
+}
+
+.stateBlock {
+    min-width: 300px;
+}
+
+.newStateButton {
+    display: flex;
+    min-height: 30px;
+    cursor: pointer;
+    align-items: center;
+    /* justify-content: center;  */
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.task {
+    font-weight: normal;
+    font-size: 16px;
+}
+
+/* .newStateButton:hover {
+    background-color: #efefef;
+}  */
+
+.inputControl {
+    display: flex;
+    flex-direction: column;
+}
+
+.buttonControl {
+    width: 100%;
+}

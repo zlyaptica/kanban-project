@@ -1,0 +1,80 @@
+.sidebar {
+    padding: 0 15px 0 15px;
+    margin: 0;
+    /* background-color: #45d7ff; */
+    background-color: #ffffff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.information {
+    margin-top: 10px;
+}
+
+.control {
+    display: flex;
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.stateNameControl {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.closeSidebar {
+    background: none;
+    border: 1px solid black;
+    border-radius: 100%;
+    margin-right: 20px;
+}
+
+.setDone {
+    background: none;
+    border: 1px solid black;
+    padding: 5px;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.done {
+    background-color: #00d70b;
+}
+
+.setDone:hover {
+    background-color: #00bc09;
+}
+
+.deleteTaskButton {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.formRow {
+    display: flex;
+    flex-direction: column;
+}
+
+.input {
+    width: 100px;
+    margin: 5px 0 10px 0;
+}
+
+.formDescription {
+    display: flex;
+    flex-direction: column;    
+}
+
+.description {
+    resize: none;
+    margin-top: 5px;
+}
+
+.taskHostory {
+    bottom: 0;
+}

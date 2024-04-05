@@ -6,7 +6,6 @@ import Footer from '@/components/Footer'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import './style.css'
-import { useEffect } from 'react'
 
 // export const metadata = {
 //   title: 'Next.js',

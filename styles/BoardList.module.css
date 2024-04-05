@@ -1,0 +1,62 @@
+.states {
+    display: flex
+}
+
+.stateBlock {
+    width: 300px;
+    /* width: 260px; */
+}
+
+.stateBlock, .newState {
+    margin: 10px;
+}
+
+.stateHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+}
+
+.stateNameControl {
+    width: 80%;
+}
+
+.deleteState {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.tasks {
+    width: 100%;
+    background-color: #f7f7f7;
+    border: 1px;
+    border-radius: 5%;
+    padding: 5px;
+}
+
+.createTask {
+    margin-top: 10px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.task { 
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+} 
+
+.setDone {
+    background: none;
+    border: 1px solid black;
+    margin-right: 10px;
+    border-radius: 10px;
+    /* margin-right: 20px; */
+}
+
+.done {
+    background-color: #00d70b;
+}

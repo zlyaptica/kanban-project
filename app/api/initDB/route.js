@@ -39,11 +39,13 @@ export async function GET(request)
     let status = new Status;
     status.board = kanban._id;
     status.name = 'Надо сделать';
+    status.index = 0;
     await status.save();
 
     status = new Status;
     status.board = kanban._id;
     status.name = 'Сделано';
+    status.index = 1;
     await status.save();
 
     let statuses = await Status.find();
@@ -55,6 +57,7 @@ export async function GET(request)
     task.description = 'Надо сделать канбан';
     task.status = statuses[0]._id;
     task.doer = users[0]._id;
+    task.index = 0;
     await task.save();
 
     task = new Task;
@@ -63,6 +66,7 @@ export async function GET(request)
     task.description = 'Надо сделать API';
     task.status = statuses[1]._id;
     task.doer = users[1]._id;
+    task.index = 0;
     await task.save();
 
     let tasks = await Task.find();
@@ -123,33 +127,3 @@ export async function GET(request)
         'message': 'в монгу все запихано'
     }))
 };
-
-/*
-export async function GET(request) {
-    await dbConnect()
-    await Task.deleteMany()
-    let newTask = new Task
-    newTask.name = 'Максим Канбан'
-    newTask.description = 'Максим Сделать'
-    await newTask.save()
-
-    newTask = new Task
-    newTask.name = 'Илья БД'
-    newTask.description = 'Илья Сделать'
-    await newTask.save()
-
-    newTask = new Task
-    newTask.name = 'Денис API'
-    newTask.description = 'Денис Сделать'
-    await newTask.save()
-
-    newTask = new Task
-    newTask.name = 'Костя WEB Socket'
-    newTask.description = 'Костя Сделать'
-    await newTask.save()
-
-    return (NextResponse.json({
-        'message': 'данные заполнены'
-    }))
-}
-*/

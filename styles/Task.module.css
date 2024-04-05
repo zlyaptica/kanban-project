@@ -1,0 +1,16 @@
+.task { 
+    display: flex;
+    align-items: center;
+} 
+
+.setDone {
+    background: none;
+    border: 1px solid black;
+    margin-right: 10px;
+    border-radius: 10px;
+    /* margin-right: 20px; */
+}
+
+.done {
+    background-color: #00d70b;
+}
