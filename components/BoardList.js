@@ -142,7 +142,7 @@ const BoardsList = (props) => {
     <div className={"d-flex"}>
       {props.statuses &&
         props.statuses.map((status) => (
-          <div key={status._id} className="w-200">
+          <div key={status._id} className={styles.stateBlock}>
             <div className={styles.stateHeader}>
               <div className={styles.stateNameControl}>
                 <StateNameControl
