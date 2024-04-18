@@ -4,6 +4,7 @@ import {Schema} from "mongoose";
 const messageSchema = new Schema({
     board: { type: Schema.Types.ObjectId, ref: 'Board' },
     author: { type: Schema.Types.ObjectId, ref: 'User' },
+    date: Date,
     index: Number,
     text: String
 });
