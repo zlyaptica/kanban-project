@@ -1,11 +1,10 @@
-'use client'
+"use client";
 
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-
-import 'bootstrap/dist/css/bootstrap.css'
-import './style.css'
+import "bootstrap/dist/css/bootstrap.css";
+import "./style.css";
 
 // export const metadata = {
 //   title: 'Next.js',
@@ -13,16 +12,17 @@ import './style.css'
 // }
 
 export default function RootLayout({ children }) {
-
   return (
     <html lang="ru">
       <body>
-        <div className='d-flex flex-column'>
+        <div className="d-flex flex-column">
           <Header />
           {children}
-          <Footer />
+          <div className="fixed-bottom">
+            <Footer />
+          </div>
         </div>
       </body>
     </html>
-  )
+  );
 }

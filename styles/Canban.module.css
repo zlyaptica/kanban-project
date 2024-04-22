@@ -10,21 +10,6 @@
     grid-template-rows: 1fr;
 }
 
-.boardBody {
-    height: 100vh;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    overflow-x: auto;
-}
-
-.newState {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
-    min-width: 300px;
-}
-
 .sidebar {
     display: none;
     position: fixed;

@@ -1,0 +1,44 @@
+.dropdownMenu {
+    position: absolute;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 5px;
+    background-color: white;
+    /* list-style: none; */
+    width: 135px;
+    z-index: 999;
+}
+
+.dropdownItem {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 1px;
+    padding: 1px;
+    text-align: left;
+    background-color: transparent;
+    border: none;
+    white-space: nowrap;
+}
+
+.dropdownItem:hover {
+    background-color: rgb(224, 224, 224);
+}
+
+.selectTypeStatus {
+    position: absolute;
+    top: 30px;
+    left: 135px;
+    overflow-y: hidden;
+    padding: 0 3px;
+    /* background-color: red; */
+}
+
+.option {
+    border-radius: 5px;
+    padding: 0 3px;
+}
+
+.deleteStatus {
+    color: rgb(255, 104, 104);
+}

@@ -1,16 +1,11 @@
 .sidebar {
     padding: 0 15px 0 15px;
     margin: 0;
-    /* background-color: #45d7ff; */
     background-color: #ffffff;
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-.information {
-    margin-top: 10px;
 }
 
 .control {
@@ -21,53 +16,27 @@
     align-items: center;
 }
 
-.stateNameControl {
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.closeSidebar {
-    background: none;
-    border: 1px solid black;
-    border-radius: 100%;
-    margin-right: 20px;
-}
-
-.setDone {
-    background: none;
-    border: 1px solid black;
-    padding: 5px;
-    border-radius: 10px;
-    margin-right: 20px;
-}
-
-.done {
-    background-color: #00d70b;
-}
-
-.setDone:hover {
-    background-color: #00bc09;
-}
-
-.deleteTaskButton {
-    width: 20px;
-    height: 20px;
+.deleteTask {
     cursor: pointer;
 }
 
-.formRow {
-    display: flex;
-    flex-direction: column;
+.stateNameControl {
+    /* padding: 10px; */
+    margin-bottom: 10px;
+}
+
+.setDoneButton {
+    padding: 5px;
+}
+
+.deleteStartDateButton {
+    width: 5px;
+    height: 5px;
 }
 
 .input {
-    width: 100px;
+    width: 110px;
     margin: 5px 0 10px 0;
-}
-
-.formDescription {
-    display: flex;
-    flex-direction: column;    
 }
 
 .description {
@@ -75,6 +44,9 @@
     margin-top: 5px;
 }
 
-.taskHostory {
-    bottom: 0;
+.subtaskInput {
+    height: 25px;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 3px;
 }

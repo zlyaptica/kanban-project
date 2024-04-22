@@ -1,5 +1,5 @@
 import styles from "@/styles/BoardList.module.css";
-import 'bootstrap/dist/css/bootstrap.css'
+import "bootstrap/dist/css/bootstrap.css";
 
 import deleteIcon from "../public/deleteIcon.svg";
 import Image from "next/image";
@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Action } from "@/utils/Enums";
 import { StateNameControl } from "./StateNameControl";
 import { Task } from "./Task";
+import { StatusMenu } from "./StatusMenu";
 
 const BoardsList = (props) => {
   //   const [currentState, setCurrentState] = useState(null)
@@ -138,103 +139,44 @@ const BoardsList = (props) => {
     console.log("типа обновили");
   };
 
+  let statusColor;
+  if (props.status.type == "TODO") statusColor = styles.bgColorTODO;
+  if (props.status.type == "DOING") statusColor = styles.bgColorDOING;
+  if (props.status.type == "DONE") statusColor = styles.bgColorDONE;
+
   return (
-    <div className={"d-flex"}>
-      {props.statuses &&
-        props.statuses.map((status) => (
-          <div key={status._id} className="w-200">
-            <div className={styles.stateHeader}>
-              <div className={styles.stateNameControl}>
-                <StateNameControl
-                  action={Action.updateStateName}
-                  statusID={status._id}
-                  nameControlHeader={status.name}
-                  confirmButton={updateStateName}
-                  act="Изменить"
-                />
-              </div>
-              <Image
-                className={styles.deleteState}
-                onClick={() => deleteState(state)}
-                src={deleteIcon}
-                alt={"delete state"}
-              />
+    <div className={styles.statusBlock + " " + statusColor}>
+      <div className={styles.stateHeader}>
+        <div className={styles.stateNameControl}>
+          <StateNameControl
+           className={styles.stateNameControl}
+            action={Action.updateStateName}
+            // statusID={status._id}
+            nameControlHeader={props.status.name}
+            act="Введите название статуса"
+          />
+        </div>
+        <StatusMenu status={props.status} />
+      </div>
+      <div className={styles.tasks}>
+        <div className={styles.createTask}>
+          <StateNameControl
+            action={Action.createTask}
+            // statusID={status._id}
+            nameControlHeader="Создать задачу"
+            act="Создать задачу"
+            tasks={props.status.tasks}
+          />
+        </div>
+        {props.status.tasks &&
+          props.status.tasks.map((task, key) => (
+            <div key={key} className={styles.task}>
+              <Task task={task} openTaskInfo={props.openTaskInfo} />
             </div>
-            <div className={styles.tasks}>
-              {status.tasks &&
-                status.tasks.map((task) => (
-                  <div
-                    key={task._id}
-                    className={styles.task}
-                    draggable={true}
-                    onDragOver={(e) => dragTaskOverHandler(e)}
-                    onDragLeave={(e) => dragTaskLeaveHandler(e)}
-                    onDragStart={(e) => dragTaskStartHandler(e, state, task)}
-                    onDragEnd={(e) => dragTaskEndHandler(e, state, task)}
-                    onDrop={(e) => dropTaskHandler(e, state, task)}
-                  >
-                    <Task
-                      task={task}
-                      openTaskInfo={props.openTaskInfo}
-                      setIsDone={props.setIsDone}
-                    />
-                  </div>
-                ))}
-              <div className={styles.createTask}>
-                <StateNameControl
-                  action={Action.createTask}
-                  statusID={status._id}
-                  nameControlHeader="Создать"
-                  confirmButton={createTask}
-                  act="Создать задачу"
-                  tasks={status.tasks}
-                />
-              </div>
-            </div>
-          </div>
-        ))}
+          ))}
+      </div>
     </div>
   );
 };
 
 export { BoardsList };
-
-// <div className={styles.states}>
-//     {props.states && props.states.map((state) => (
-//                 <div className={styles.stateBlock}
-//                     key={state._id} draggable={true}
-//                     onDragOver={(e) => dragStateOverHandler(e)}
-//                     onDragLeave={(e) => dragStateLeaveHandler(e)}
-//                     onDragStart={(e) => dragStateStartHandler(e, state)}
-//                     onDragEnd={(e) => dragStateEndHandler(e)}
-//                     onDrop={(e) => dropStateHandler(e, state)}
-//                 >
-//                     <div className={styles.stateHeader}>
-//                         <div className={styles.stateNameControl} >
-//                             <StateNameControl status={Status.updateStateName} stateID={state._id} stateName={state.name} confirmButton={updateStateName}
-//                                 act="Изменить" />
-//                         </div>
-//                         <Image className={styles.deleteState} onClick={() => deleteState(state)} src={deleteIcon} alt={"delete state"} />
-
-//                     </div>
-//                     <div className={styles.tasks}>
-//                         {state.tasks && state.tasks.map(task => (
-//                             <div key={task._id} className={styles.task}
-//                                 draggable={true}
-//                                 onDragOver={(e) => dragTaskOverHandler(e)}
-//                                 onDragLeave={(e) => dragTaskLeaveHandler(e)}
-//                                 onDragStart={(e) => dragTaskStartHandler(e, state, task)}
-//                                 onDragEnd={(e) => dragTaskEndHandler(e, state, task)}
-//                                 onDrop={(e) => dropTaskHandler(e, state, task)}
-//                             >
-//                                 <Task task={task} openTaskInfo={props.openTaskInfo} setIsDone={props.setIsDone} />
-//                             </div>
-//                         ))}
-//                         <div className={styles.createTask}>
-//                             <StateNameControl status={Status.createTask} stateID={state._id} stateName="Создать" confirmButton={createTask}
-//                                 act="Создать задачу" tasks={state.tasks} />
-//                         </div>
-//                     </div>
-//                 </div>
-//             ))}
-// </div>

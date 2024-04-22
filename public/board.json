@@ -1,0 +1,130 @@
+[
+    {
+        "name": "Бэклог",
+        "type": "TODO",
+        "tasks": [
+            {
+                "name": "Добавить регистрацию",
+                "description": "Присобачить к текущему проекту геристрацию/авторизацию",
+                "doer": "Maxim",
+                "index": 0,
+                "priority": 1,
+                "start_date": "2024-10-07",
+                "deadline": "2024-10-10",
+                "subtasks": [
+                    {
+                        "name": "task 1",
+                        "is_completed": true
+                    },
+                    {
+                        "name": "task 2",
+                        "is_completed": false
+                    }
+                ],
+                "is_completed": true
+            },
+            {
+                "name": "Создать страницу со списком проектов пользователя",
+                "description": "нарисовать красивый статический канбан",
+                "doer": "Maxim",
+                "index": 1,
+                "priority": 3,
+                "deadline": "2024-10-10"
+            },
+            {
+                "name": "Сделать индексацию в монге",
+                "description": "Сделать индексацию в монге, чтобы все летало как ракета",
+                "doer": "Ilya",
+                "index": 2,
+                "priority": 0
+            }
+        ]
+    },
+    {
+        "name": "Фронтенд",
+        "type": "DOING",
+        "tasks": [
+            {
+                "name": "Тестовые данные для канбана",
+                "description": "Заполнить тестовый жсон для отрисовки статического канбана",
+                "doer": "Maxim",
+                "index": 0,
+                "priority": 2
+            },
+            {
+                "name": "Нарисовать канбан",
+                "description": "Сверстать статический КРАСИВЫЙ канбан",
+                "doer": "Maxim",
+                "index": 1,
+                "priority": 1
+            }
+        ]
+    },
+    {
+        "name": "Бэкенд",
+        "type": "DOING",
+        "tasks": [
+            {
+                "name": "api для канбана",
+                "description": "Сделать api для канбана",
+                "doer": "Denis",
+                "index": 0,
+                "priority": 0
+            },
+            {
+                "name": "Рефакторинг",
+                "description": "Отрефакторить нейминг переменных",
+                "doer": "Denis",
+                "index": 1,
+                "priority": 1
+            }
+        ]
+    },
+    {
+        "name": "Чат",
+        "type": "DOING",
+        "tasks": [
+            {
+                "name": "Тестирование чата на Next.js 13",
+                "description": "Посмотреть, будут ли работать веб-сокеты на 13м нексте",
+                "doer": "Kostya",
+                "index": 0,
+                "priority": 0
+            },
+            {
+                "name": "Чат между 2 пользователями",
+                "description": "Показать общение 2 человек",
+                "doer": "Kostya",
+                "index": 1,
+                "priority": 0
+            }
+        ]
+    },
+    {
+        "name": "Сделано",
+        "type": "DONE",
+        "tasks": [
+            {
+                "name": "Подключиться к монгодб",
+                "description": "Посмотреть, будут ли работать веб-сокеты на 13м нексте",
+                "doer": "Ilya",
+                "index": 0,
+                "priority": 3
+            },
+            {
+                "name": "Написать модели для коллекций",
+                "description": "Показать общение 2 человек",
+                "doer": "Ilya",
+                "index": 1,
+                "priority": 2
+            },
+            {
+                "name": "Заполнить бд тестовыми данными",
+                "description": "Что-нибудь туда закиньте уже",
+                "doer": "Denis",
+                "index": 2,
+                "priority": 1
+            }
+        ]
+    }
+]

@@ -1,16 +1,29 @@
-.task { 
-    display: flex;
-    align-items: center;
-} 
-
 .setDone {
     background: none;
-    border: 1px solid black;
+    border: none;
     margin-right: 10px;
     border-radius: 10px;
-    /* margin-right: 20px; */
+    padding: 0;
 }
 
 .done {
     background-color: #00d70b;
+}
+
+.taskHeader {
+    font-weight: bold;
+    font-size: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.taskDoer {
+    font-size: 12px;
+    margin: 0;
+}
+
+.subtaskHeader {
+    margin: 0;
+    font-size: 14px;
+    font-style: italic;
 }

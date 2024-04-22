@@ -9,3 +9,5 @@ export const TaskFieldType = {
     deadline: 0,
     description: 1,
 }
+
+export const TaskAttributes = ["", "Низкий", "Средний", "Высокий"]

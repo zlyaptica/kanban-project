@@ -1,10 +1,22 @@
-.states {
-    display: flex
+.statusBlock {
+    position: relative;
+    width: 260px;
+    margin: 8px;
+    padding: 8px;
+    padding-bottom: 5px; 
+    border-radius: 15px;
+} 
+
+.bgColorTODO {
+    background-color: rgba(139, 148, 166, 0.4);
 }
 
-.stateBlock {
-    width: 300px;
-    /* width: 260px; */
+.bgColorDOING {
+    background-color: rgba(127, 137, 204, 0.4);
+}
+
+.bgColorDONE {
+    background-color: rgba(106, 166, 106, 0.4);
 }
 
 .stateBlock, .newState {
@@ -15,48 +27,32 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .stateNameControl {
     width: 80%;
 }
 
-.deleteState {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
 
 .tasks {
-    width: 100%;
-    background-color: #f7f7f7;
+    align-items: center;
     border: 1px;
-    border-radius: 5%;
-    padding: 5px;
+    border-radius: 5px;
+    margin: 0 auto;
 }
 
 .createTask {
-    margin-top: 10px;
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: 15px;
+    margin-bottom: 5px;
 }
 
 .task { 
     display: flex;
+    background-color: #ffffff;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 15px;
 } 
-
-.setDone {
-    background: none;
-    border: 1px solid black;
-    margin-right: 10px;
-    border-radius: 10px;
-    /* margin-right: 20px; */
-}
-
-.done {
-    background-color: #00d70b;
-}
