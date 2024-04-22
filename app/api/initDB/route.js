@@ -100,6 +100,7 @@ export async function GET(request)
     message.author = users[0]._id;
     message.index = 0;
     message.text = 'Привет';
+    message.date = new Date('2023-04-17T10:36:00')
     await message.save();
 
     message = new Message;
@@ -107,6 +108,7 @@ export async function GET(request)
     message.author = users[1]._id;
     message.index = 1;
     message.text = 'Здарова';
+    message.date = new Date('2023-04-17T10:36:10')
     await message.save();
 
     message = new Message;
@@ -114,6 +116,7 @@ export async function GET(request)
     message.author = users[0]._id;
     message.index = 2;
     message.text = 'Пока';
+    message.date = new Date('2023-04-17T10:36:20')
     await message.save();
 
     message = new Message;
@@ -121,6 +124,7 @@ export async function GET(request)
     message.author = users[1]._id;
     message.index = 3;
     message.text = 'И тебе того же';
+    message.date = new Date('2023-04-17T10:36:30')
     await message.save();
 
     return (NextResponse.json({
