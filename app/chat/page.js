@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 
 
 
-const socket = io("http://localhost:5000/");
+const socket = io();
 function getLocalTime(date) {
     const localTime = new Date(date).toLocaleTimeString("en-US", {
       hour: "numeric",
@@ -18,14 +18,19 @@ function getLocalTime(date) {
   }
 
 const Response = async (msg) => {
-    await fetch('/api/chat', {
+    let res = await fetch('/api/chat', {
         method: 'POST',
         body: JSON.stringify(msg),
         headers: {
             'Content-Type': 'application/json'
         }
     })
+    let resJson = await res.json()
+    console.log("resp")
+    console.log(resJson.messageID)
+    return resJson
 }
+
 export default function Chat() {
 
     const [newMessage, setNewMessage] = useState('')
@@ -69,12 +74,23 @@ export default function Chat() {
                 },
                 'date': new Date(),
             }
-            socket.emit("newMessage", Msg)
+            
 
             setMessages(current => [...current, Msg])
             setNewMessage('');
-            Response(Msg)
+            Response(Msg).then((result)=>{Msg._id=result.messageID})
+            console.log(Msg)
+            socket.emit("newMessage", Msg)
         }
+    }
+    const deleteBtnClick = (message) =>{
+        setMessages(messages.filter((el)=>{return el._id != message._id}))
+        console.log(message)
+        let s = "new ObjectId('662ecc7520254c1080dc71d6')"
+
+    }
+    const EditBtnClick = (message) =>{
+        setNewMessage(message.text)    
     }
 
     return (
@@ -89,11 +105,12 @@ export default function Chat() {
                                     <div>
                                         <span className="fw-bold">{message.authorData.name} </span>
                                         <span className="fw-lighter">{getLocalTime(message.date)}</span>
+                                        <button type="button" className="btn btn-primary btn-sm pull-right float-end"onClick={()=>{deleteBtnClick(message)}}>Удалить</button>
+                                        <button type="button" className="btn btn-primary btn-sm pull-right float-end"onClick={()=>{EditBtnClick(message)}}>Редактировать</button>
                                     </div>
-
                                     {message.text}
                                 </div>
-                            </div>
+                            </div>                         
                         </li>)
 
                 }

@@ -22,7 +22,7 @@ export async function GET(request) {
         {$sort: {date: 1}},
         {
             $project: {
-                _id: 0,
+                _id: 1,
                 text: 1,
                 "authorData.name": 1,
                 date: 1
@@ -35,11 +35,8 @@ export async function GET(request) {
 export async function POST(request, Response) {
     const newMessage = await request.json();
     await dbConnect()
-    console.log(newMessage)
     let kanban = await Board.findOne();
-    console.log(kanban)
     let user = await User.findOne({ "name": newMessage.authorData.name })
-    console.log(user)
     let message = new Message({
         "board": kanban._id,
         "author": user._id,
@@ -47,7 +44,10 @@ export async function POST(request, Response) {
         "index": 4,
         "text": newMessage.text
     });
+    let resultMessage
+    await message.save().then(result=>{resultMessage = result});
+    let messageID= String(resultMessage._id)
+    console.log(messageID)
 
-    await message.save();
-    return (NextResponse.json({ status: 200 }))
+    return (NextResponse.json({ status: 200, messageID}))
 }
