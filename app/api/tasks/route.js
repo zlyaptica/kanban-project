@@ -9,3 +9,21 @@ export async function GET(request) {
 
     return (NextResponse.json(tasks))
 }
+
+export async function POST(request) {
+    await dbConnect()
+
+    const requestBody = request.body;
+    let task = new Task;
+    task.board = requestBody.board;
+    task.name = requestBody.name;
+    task.description = requestBody.description;
+    task.status = requestBody.status;
+    task.doer = requestBody.user;
+    await task.save();
+
+    return (NextResponse.json({
+        message: 'task created',
+        task
+    }))
+}
