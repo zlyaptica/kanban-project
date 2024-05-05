@@ -14,6 +14,7 @@ export async function POST(request) {
     await dbConnect()
 
     const requestBody = request.body;
+    
     let task = new Task;
     task.board = requestBody.board;
     task.name = requestBody.name;
