@@ -6,7 +6,9 @@ const taskSchema = new Schema({
     doer: { type: Schema.Types.ObjectId, ref: 'User' },
     status: { type: Schema.Types.ObjectId, ref: 'Status' },
     name: String,
-    description: String
+    description: String,
+    index: Number
 });
+
 
 export default mongoose.models.Task || mongoose.model("Task", taskSchema);
