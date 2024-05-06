@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
+import styles from './styles.module.css'
 
 let currentUser = {
     "_id": "66212135ac07340e285d4309",
@@ -159,7 +160,7 @@ messagesRef.current.map((message, key) =>
             </ol>
             <div hidden={Object.keys(editMessage) != 0}>
                 <div>
-                    <textarea value={newMessage} onChange={(event) => { setNewMessage(event.target.value) }}></textarea>
+                    <textarea className={styles.TextareaClass} value={newMessage} onChange={(event) => { setNewMessage(event.target.value) }}></textarea>
                 </div>
                 <div>
                     <button type="button" onClick={handleBtnClick}>отправить</button>
@@ -167,7 +168,7 @@ messagesRef.current.map((message, key) =>
             </div>
             <div hidden={Object.keys(editMessage) == 0}>
                 <div>
-                    <textarea value={editMessage.text} onChange={(event) => { setEditMessages({ ...editMessage, text: event.target.value }) }}></textarea>
+                    <textarea className={styles.TextareaClass} value={editMessage.text} onChange={(event) => { setEditMessages({ ...editMessage, text: event.target.value }) }}></textarea>
                 </div>
                 <div>
                     <button type="button" onClick={handleEditBtnClick}>Редактировать</button>
