@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
-import styles from './styles.module.css'
+import styles from './chat.module.css'
 
 let currentUser = {
     "_id": "66212135ac07340e285d4309",
