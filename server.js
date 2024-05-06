@@ -34,10 +34,20 @@ app.prepare().then(() => {
   io.on("connection", async (socket) => {
     console.log(socket.id)
     socket.on("newMessage", async (msg) => {
+      console.log("newMessage")
       console.log(msg)
-      
       socket.broadcast.emit("broadcastNewMessage", msg)
-    })
+    });
+    socket.on("deleteMessage", async (msg) => {
+      console.log("deleteMessage")
+      console.log(msg)
+      socket.broadcast.emit("broadcastDelete", msg)
+    });
+    socket.on("updateMessage", async (msg) => {
+      console.log("updateMessage")
+      console.log(msg)
+      socket.broadcast.emit("broadcastUpdate", msg)
+    });
   })
   
   httpServer

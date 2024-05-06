@@ -24,6 +24,7 @@ export async function GET(request) {
             $project: {
                 _id: 1,
                 text: 1,
+                "authorData._id": 1,
                 "authorData.name": 1,
                 date: 1
             }
@@ -32,7 +33,7 @@ export async function GET(request) {
         ]);
     return (NextResponse.json(messages))
 }
-export async function POST(request, Response) {
+export async function PUT(request, Response) {
     const newMessage = await request.json();
     await dbConnect()
     let kanban = await Board.findOne();
@@ -50,4 +51,17 @@ export async function POST(request, Response) {
     console.log(messageID)
 
     return (NextResponse.json({ status: 200, messageID}))
+}
+export async function DELETE(request, Response){
+    const delMessage = await request.json()
+    await dbConnect()
+    await Message.deleteOne({_id: delMessage._id})
+    return (NextResponse.json({status: 200}))
+}
+
+export async function PATCH(request, Response){
+    const updateMessage = await request.json()
+    await dbConnect()
+    await Message.findOneAndUpdate({_id: updateMessage._id}, {text: updateMessage.text})
+    return (NextResponse.json({status: 200})) 
 }
