@@ -24,3 +24,19 @@ export async function GET(request) {
 
     return (NextResponse.json({statusTasks}))
 }
+
+export async function POST(request) {
+    await dbConnect()
+
+    const requestBody = request.body;
+    
+    let status = new Status;
+    status.board = requestBody.board;
+    status.name = requestBody.name;
+    await status.save()
+
+    return (NextResponse.json({
+        message: 'status created',
+        status: status
+    }))
+}
