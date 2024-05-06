@@ -26,12 +26,9 @@
 }
 
 .selectTypeStatus {
-    position: absolute;
-    top: 30px;
-    left: 135px;
+    width: 100%;
+    border: none;
     overflow-y: hidden;
-    padding: 0 3px;
-    /* background-color: red; */
 }
 
 .option {

@@ -11,58 +11,49 @@ const StatusMenu = (props) => {
   };
 
   return (
-    <div className={"dropdown align-middle"} onBlur={() => disableMenu()}>
+    <div className={"dropdown align-middle"}>
       <button
         className="btn"
         type="button"
-        onClick={() => setIsOpenMenu(!isOpenMenu)}
+        onClick={() => disableMenu()}
       >
         ...
       </button>
       {isOpenMenu ? (
-        <div>
-          <div className={styles.dropdownMenu}>
-            <div>
-              <button className={styles.dropdownItem} type="button">
-                Action
-              </button>
-            </div>
-            <div>
-              <p
-                className={styles.dropdownItem}
-                onMouseEnter={() => setIsOpenSelectTypeStatus(true)}
-              >
-                Выбрать тип &gt;
-              </p>
-              {isOpenSelectTypeStatus ? (
-                <div onMouseLeave={() => setIsOpenSelectTypeStatus(false)}>
-                  <select
-                    className={styles.selectTypeStatus}
-                    size="3"
-                    value={props.status.type}
-                  >
-                    <option id="TODO" className={styles.option}>
-                      TODO
-                    </option>
-                    <option id="DOING" className={styles.option}>
-                      DOING
-                    </option>
-                    <option id="DONE" className={styles.option}>
-                      DONE
-                    </option>
-                  </select>
-                </div>
-              ) : null}
-            </div>
-            <div>
-              <button
-                className={styles.dropdownItem + " " + styles.deleteStatus}
-                type="button"
-              >
-                Удалить
-              </button>
-            </div>
-          </div>
+        <div className={styles.dropdownMenu}>
+          <button className={styles.dropdownItem} type="button">
+            Action
+          </button>
+          <p
+            className={styles.dropdownItem}
+            onClick={() => setIsOpenSelectTypeStatus(!isOpenSelectTypeStatus)}
+          >
+            Выбрать тип&nbsp;
+            <i className="dropdown-toggle"></i>
+          </p>
+          {isOpenSelectTypeStatus ? (
+            <select
+              className={styles.selectTypeStatus}
+              size="3"
+              value={props.status.type}
+            >
+              <option id="TODO" className={styles.option}>
+                TODO
+              </option>
+              <option id="DOING" className={styles.option}>
+                DOING
+              </option>
+              <option id="DONE" className={styles.option}>
+                DONE
+              </option>
+            </select>
+          ) : null}
+          <button
+            className={styles.dropdownItem + " " + styles.deleteStatus}
+            type="button"
+          >
+            Удалить
+          </button>
         </div>
       ) : null}
     </div>
@@ -70,3 +61,50 @@ const StatusMenu = (props) => {
 };
 
 export { StatusMenu };
+
+// {isOpenMenu ? (
+//   <div>
+//     <div className={styles.dropdownMenu}>
+//       <div>
+//         <button className={styles.dropdownItem} type="button">
+//           Action
+//         </button>
+//       </div>
+//       <div>
+//         <p
+//           className={styles.dropdownItem}
+//           onMouseEnter={() => setIsOpenSelectTypeStatus(true)}
+//         >
+//           Выбрать тип &gt;
+//         </p>
+//         {isOpenSelectTypeStatus ? (
+//           <div onMouseLeave={() => setIsOpenSelectTypeStatus(false)}>
+//             <select
+//               className={styles.selectTypeStatus}
+//               size="3"
+//               value={props.status.type}
+//             >
+//               <option id="TODO" className={styles.option}>
+//                 TODO
+//               </option>
+//               <option id="DOING" className={styles.option}>
+//                 DOING
+//               </option>
+//               <option id="DONE" className={styles.option}>
+//                 DONE
+//               </option>
+//             </select>
+//           </div>
+//         ) : null}
+//       </div>
+//       <div>
+//         <button
+//           className={styles.dropdownItem + " " + styles.deleteStatus}
+//           type="button"
+//         >
+//           Удалить
+//         </button>
+//       </div>
+//     </div>
+//   </div>
+// ) : null}
