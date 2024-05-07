@@ -1,3 +1,4 @@
+import { GetBoardData } from '@/app/utils/utils'
 import dbConnect from '@/lib/dbConnect'
 import Task from '@/models/Task'
 import { NextResponse } from 'next/server'
@@ -7,7 +8,12 @@ export async function GET(request) {
     await dbConnect()
     let tasks = await Task.find()
 
-    return (NextResponse.json(tasks))
+    let boardData = await GetBoardData()
+
+    return (NextResponse.json({
+        tasks: tasks,
+        boardData: boardData
+    }))
 }
 
 export async function POST(request) {
@@ -23,8 +29,11 @@ export async function POST(request) {
     task.doer = requestBody.user;
     await task.save();
 
+    let boardData = await GetBoardData()
+
     return (NextResponse.json({
         message: 'task created',
-        task: task
+        task: task,
+        boardData: boardData
     }))
 }

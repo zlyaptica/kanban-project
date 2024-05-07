@@ -1,3 +1,4 @@
+import { GetBoardData } from '@/app/utils/utils';
 import dbConnect from '@/lib/dbConnect';
 import Status from '@/models/Status';
 import { NextResponse } from 'next/server'
@@ -6,6 +7,13 @@ export async function DELETE(request, {params}) {
     await dbConnect()
 
     Status.findByIdAndDelete(params.id)
+
+    let boardData = await GetBoardData()
+
+    return (NextResponse.json({
+        message: 'status deleted',
+        boardData: boardData
+    }))
 }
 
 export async function POST(request, {params}) {
@@ -17,8 +25,11 @@ export async function POST(request, {params}) {
 
     let updatedStatus = Status.findById(params.id)
 
+    let boardData = await GetBoardData()
+
     return (NextResponse.json({
         message: 'status updated',
-        status: updatedStatus
+        status: updatedStatus,
+        boardData: boardData
     }))
 }
