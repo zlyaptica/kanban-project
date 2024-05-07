@@ -8,7 +8,9 @@ import { StateNameControl } from "@/components/StateNameControl";
 import { Sidebar } from "@/components/Sidebar";
 import board from "@/public/board.json";
 
-export default function Board() {
+export default function Board({params}) {
+  const boardID = params.board_id
+  console.log(boardID)
   const [statuses, setStatuses] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentOpenTaskSidebarData, setCurrentOpenTaskSidebarData] =
@@ -37,9 +39,8 @@ export default function Board() {
   };
 
   useEffect(() => {
-    // setStatuses(board);
     async function getStatuses() {
-      let res = await fetch("/api/statuses");
+      let res = await fetch(`/api/${boardID}/statuses`);
       let resJson = await res.json();
       setStatuses(resJson.statusTasks);
     }

@@ -37,13 +37,13 @@ export async function GET(request)
     let kanban = await Board.findOne();
 
     let status = new Status;
-    status.board = kanban._id;
+    status.board_id = kanban._id;
     status.name = 'Надо сделать';
     status.index = 0;
     await status.save();
 
     status = new Status;
-    status.board = kanban._id;
+    status.board_id = kanban._id;
     status.name = 'Сделано';
     status.index = 1;
     await status.save();
@@ -52,7 +52,7 @@ export async function GET(request)
     let users = await User.find();
 
     let task = new Task;
-    task.board = kanban._id;
+    task.board_id = kanban._id;
     task.name = 'Сделать канбан';
     task.description = 'Надо сделать канбан';
     task.status = statuses[0]._id;
@@ -61,7 +61,7 @@ export async function GET(request)
     await task.save();
 
     task = new Task;
-    task.board = kanban._id;
+    task.board_id = kanban._id;
     task.name = 'Сделать API';
     task.description = 'Надо сделать API';
     task.status = statuses[1]._id;

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {Schema} from "mongoose";
 
 const statusSchema = new Schema({
-    board: { type: Schema.Types.ObjectId, ref: 'Board' },
+    board_id: { type: Schema.Types.ObjectId, ref: 'Board' },
     name: String,
     type: String
 });

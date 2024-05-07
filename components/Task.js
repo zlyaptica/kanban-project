@@ -5,8 +5,8 @@ import fork from "@/public/fork.png";
 import Image from "next/image";
 import { TaskStickers } from "./TaskStickers";
 
-// Надо сделать иконку выполненной таски(фон в зеленый), и подставлять иконку в зависимости от
 const Task = (props) => {
+  debugger
   return (
     <div className={"d-flex align-items-start"}>
       {/* <button className={setDoneClass} onClick={() => props.setIsDone(props.task._id, !props.task.is_completed)}>✔</button>  */}

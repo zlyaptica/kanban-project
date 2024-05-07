@@ -1,4 +1,4 @@
-import { GetBoardData } from '@/app/utils/utils'
+import { GetBoardData } from '@/utils/GetBoardData';
 import dbConnect from '@/lib/dbConnect'
 import Task from '@/models/Task'
 import { NextResponse } from 'next/server'
