@@ -1,15 +1,20 @@
 import dbConnect from '@/lib/dbConnect';
 import Task from '@/models/Task';
 import Status from '@/models/Status';
-import { NextResponse } from 'next/server'
+import User from '@/models/User';
 
 export async function GetBoardData(){
     await dbConnect()
     let statuses = await Status.find()
-    let statusTasks = []
+    let statusWithTasks = []
 
     for (let i = 0; i < statuses.length; i++){
         let tasks = await Task.find({"status" : statuses[i]})
+
+        tasks.forEach(task => {
+            let doer = User.findById(task.doer)
+            task.doer = doer.name
+        });
 
         const filledStatus = {
             _id: statuses[i]._id,
@@ -18,9 +23,8 @@ export async function GetBoardData(){
             tasks: tasks
         }
 
-        statusTasks.push(filledStatus)
+        statusWithTasks.push(filledStatus)
     }
 
-    //return (NextResponse.json({statusTasks}))
-    return statusTasks
+    return statusWithTasks
 }
