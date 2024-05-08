@@ -6,7 +6,7 @@ import Image from "next/image";
 import { TaskStickers } from "./TaskStickers";
 
 const Task = (props) => {
-  debugger
+  const task = props.task.task
   return (
     <div className={"d-flex align-items-start"}>
       {/* <button className={setDoneClass} onClick={() => props.setIsDone(props.task._id, !props.task.is_completed)}>✔</button>  */}
@@ -18,17 +18,17 @@ const Task = (props) => {
         className="me-1"
       />
       <div>
-        <p className={styles.taskDoer}>{props.task.doer}</p>
+        <p className={styles.taskDoer}>{props.task.doerData.name}</p>
         <p
           className={styles.taskHeader}
-          onClick={() => props.openTaskInfo(props.task)}
+          onClick={() => props.openTaskInfo(task)}
         >
-          {props.task.name}
+          {props.task.task.name}
         </p>
         <TaskStickers
-          priority={props.task.priority}
-          startDate={props.task.start_date}
-          deadline={props.task.deadline}
+          priority={task.priority}
+          startDate={task.start_date}
+          deadline={task.deadline}
         />
         {props.task.subtasks ? (
           <div className={"d-flex flex-row align-items-center"}>
@@ -41,11 +41,11 @@ const Task = (props) => {
             />
             <p className={styles.subtaskHeader}>
               {
-                (props.task.subtasks?.filter(
+                (task.subtasks?.filter(
                   (subtask) => subtask.is_completed === true
                 )).length
               }
-              /{props.task.subtasks.length}
+              /{task.subtasks.length}
             </p>
           </div>
         ) : null}

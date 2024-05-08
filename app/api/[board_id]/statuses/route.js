@@ -10,17 +10,17 @@ export async function GET(request, {params}) {
     return (NextResponse.json({statusTasks}))
 }
 
-export async function POST(request) {
+export async function POST(request, {params}) {
     await dbConnect()
-
-    const requestBody = request.body;
+    const board_id = params.board_id
+    const data = await request.json();
     
     let status = new Status;
-    status.board = requestBody.board;
-    status.name = requestBody.name;
+    status.board_id = board_id;
+    status.name = data.name;
     await status.save()
 
-    let boardData = await GetBoardData();
+    let boardData = await GetBoardData(board_id);
 
     return (NextResponse.json({
         message: 'status created',

@@ -32,7 +32,7 @@ const StateNameControl = (props) => {
   };
 
   const confirmButton = () => {
-    console.log("подтвердили кнопку");
+    props.createStatus(inputValue)
   };
 
   // const handleKeyDown = (e) => {

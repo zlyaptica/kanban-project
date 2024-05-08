@@ -15,9 +15,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ru">
       <body>
-        <div className="d-flex flex-column">
-          <Header />
-          {children}
+        <div className="d-flex">
+          <div className={"d-flex flex-row"}>
+            <div className={""}>
+              <Header />
+            </div>
+            <div className={""}>{children}</div>
+          </div>
           <div className="fixed-bottom">
             <Footer />
           </div>

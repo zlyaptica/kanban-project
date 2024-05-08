@@ -1,4 +1,4 @@
-import classes from '../../styles/Popup.module.css'
+import classes from '@/styles/Popup.module.css'
 
 const Popup = ({active, setActive, children}) => {
     const popupActive = classes.popup + ' ' + classes.active

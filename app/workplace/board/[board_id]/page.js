@@ -8,9 +8,8 @@ import { StateNameControl } from "@/components/StateNameControl";
 import { Sidebar } from "@/components/Sidebar";
 import board from "@/public/board.json";
 
-export default function Board({params}) {
-  const boardID = params.board_id
-  console.log(boardID)
+export default function Board({ params }) {
+  const boardID = params.board_id;
   const [statuses, setStatuses] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [currentOpenTaskSidebarData, setCurrentOpenTaskSidebarData] =
@@ -24,8 +23,19 @@ export default function Board({params}) {
     ? styles.sidebar + " " + styles.sidebarOpen
     : styles.sidebar;
 
-  const createStatus = (name) => {
-    console.log("создали статус");
+  const createStatus = async (name) => {
+    const res = await fetch(`/api/${boardID}/statuses`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        name: name,
+      }),
+    });
+    const resJson = await res.json();
+    setStatuses(await resJson.statusTasks);
   };
 
   const openTaskInfo = (task) => {
@@ -61,6 +71,7 @@ export default function Board({params}) {
             status={Action.createState}
             nameControlHeader="Создать новый статус"
             act="Создать новый статус"
+            createStatus={createStatus}
           />
         </div>
       </div>
