@@ -27,24 +27,3 @@
     align-items: center;
     margin: auto 0 auto auto;
 }
-
-/* Header.js */
-
-.navbar .container-fluid, 
-.navbar-expand-lg .navbar-collapse, 
-.navbar-expand-lg .navbar-nav {
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: start;
-}
-
-.container-fluid {
-    height: 100vh;
-    justify-content: start;
-}
-
-.navbar {
-    /* width: 50%; */
-    padding-top: 10px;
-    height: 100vh;
-}

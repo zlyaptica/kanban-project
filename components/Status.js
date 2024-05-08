@@ -1,4 +1,4 @@
-import styles from "@/styles/BoardList.module.css";
+import styles from "@/styles/Status.module.css";
 import "bootstrap/dist/css/bootstrap.css";
 
 import deleteIcon from "../public/deleteIcon.svg";
@@ -9,7 +9,7 @@ import { StateNameControl } from "./StateNameControl";
 import { Task } from "./Task";
 import { StatusMenu } from "./StatusMenu";
 
-const BoardsList = (props) => {
+const Status = (props) => {
   //   const [currentState, setCurrentState] = useState(null)
   //   const [currentTask, setCurrentTask] = useState(null)
   //   const [isDraggedTask, setIsDraggedTask] = useState(false)
@@ -179,4 +179,4 @@ const BoardsList = (props) => {
   );
 };
 
-export { BoardsList };
+export { Status };

@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "@/styles/Canban.module.css";
-import { BoardsList } from "@/components/BoardList";
+import { Status } from "@/components/Status";
 import { Action } from "@/utils/Enums";
 import { useEffect, useState } from "react";
 import { StateNameControl } from "@/components/StateNameControl";
@@ -63,7 +63,7 @@ export default function Board({ params }) {
         {statuses &&
           statuses.map((status, key) => (
             <div key={key}>
-              <BoardsList status={status} openTaskInfo={openTaskInfo} />
+              <Status status={status} openTaskInfo={openTaskInfo} />
             </div>
           ))}
         <div className={"p-2 m-2"}>
