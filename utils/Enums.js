@@ -3,6 +3,7 @@ export const Action = {
     updateStateName: 1,
     createTask: 2,
     updateTaskName: 3,
+    createBoard: 4,
 }
 
 export const TaskFieldType = {

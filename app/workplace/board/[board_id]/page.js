@@ -6,7 +6,6 @@ import { Action } from "@/utils/Enums";
 import { useEffect, useState } from "react";
 import { StateNameControl } from "@/components/StateNameControl";
 import { Sidebar } from "@/components/Sidebar";
-import board from "@/public/board.json";
 
 export default function Board({ params }) {
   const boardID = params.board_id;
@@ -24,10 +23,10 @@ export default function Board({ params }) {
     : styles.sidebar;
 
   const createStatus = async (name) => {
-    const res = await fetch(`/api/${boardID}/statuses`, {
+    const res = await fetch(`/api/board/${boardID}/statuses`, {
       method: "POST",
       headers: {
-        "Accept": "application/json",
+        Accept: "application/json",
         "Content-Type": "application/json;charset=utf-8",
       },
       body: JSON.stringify({
@@ -49,13 +48,33 @@ export default function Board({ params }) {
   };
 
   useEffect(() => {
-    async function getStatuses() {
-      let res = await fetch(`/api/${boardID}/statuses`);
-      let resJson = await res.json();
-      setStatuses(resJson.statusTasks);
+    async function getStatuses(user_id) {
+      let response = await fetch(`/api/users/${user_id}/boards`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          board_id: boardID,
+        }),
+      });
+      let data = await response.json()
+      console.log("с серва пришло:", data.message)
+      response = await fetch(`/api/board/${boardID}/statuses`);
+      data = await response.json();
+      setStatuses(data.statusTasks);
     }
 
-    getStatuses();
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+      if (user) {
+        getStatuses(user._id);
+      } else {
+        console.log("вы не авторизованы");
+      }
+    }
   }, []);
   return (
     <div className={canbanStyles}>
@@ -71,7 +90,7 @@ export default function Board({ params }) {
             status={Action.createState}
             nameControlHeader="Создать новый статус"
             act="Создать новый статус"
-            createStatus={createStatus}
+            create={createStatus}
           />
         </div>
       </div>

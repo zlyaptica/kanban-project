@@ -68,13 +68,13 @@ const Sidebar = (props) => {
               Выполнено
             </button>
           </div>
-          <div className={styles.deleteTask + " " + "ml-auto p-2"}>
+          <div className={"cursor-pointer ml-auto p-2"}>
             <Image
               src={deleteIcon}
               height={20}
               width={20}
               alt="Удалить задачу"
-              className={"pe-auto"}
+              className={"cursor-pointer ml-auto p-2"}
               onClick={() => deleteTask(props.task._id)}
             />
           </div>

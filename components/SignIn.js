@@ -1,3 +1,5 @@
+import { navigate } from "@/app/actions";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 
 const SignIn = (props) => {
@@ -5,7 +7,7 @@ const SignIn = (props) => {
   const [password, setPassword] = useState("");
 
   const popupHandle = () => {
-    props.setPopupSignInActive(false);
+    props.setSignInPopupActive(false);
     props.setPopupSignUpActive(true);
   };
 
@@ -24,14 +26,17 @@ const SignIn = (props) => {
     });
     if (response.status === 200) {
       const user = await response.json();
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('isAuthenticatedUser', 'true')
-        localStorage.setItem("user", JSON.stringify(user.user))
-    }
+      if (typeof window !== "undefined") {
+        localStorage.setItem("isAuthenticatedUser", "true");
+        localStorage.setItem("user", JSON.stringify(user.user));
+      }
+      props.setSignInPopupActive(false);
+      navigate()
     }
   };
   return (
     <>
+      {/* <form className="m-1" onSubmit={(e) => props.signInSubmit(e, email, password)}> */}
       <form className="m-1" onSubmit={signInSubmit}>
         <div className="mb-3">
           <label className="form-label">Email address</label>

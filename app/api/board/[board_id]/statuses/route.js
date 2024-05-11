@@ -3,6 +3,7 @@ import dbConnect from '@/lib/dbConnect';
 import Status from '@/models/Status';
 import { NextResponse } from 'next/server'
 
+
 export async function GET(request, {params}) {
     const board_id = params.board_id
     const statusTasks = await GetBoardData(board_id)

@@ -10,18 +10,13 @@ import Access from "@/models/Access";
 
 export async function GET(request) {
   await dbConnect();
+  await Access.deleteMany();
   await Board.deleteMany();
   await Task.deleteMany();
   await User.deleteMany();
   await Status.deleteMany();
   await Subtask.deleteMany();
   await Message.deleteMany();
-
-  let board = new Board();
-  board.name = "Канбан";
-  board.description = "Тестовый канбан";
-  await board.save();
-
   let user = new User();
   user.name = "Денис Пиялкин";
   user.email = "tankizlego@gmail.com";
@@ -33,6 +28,14 @@ export async function GET(request) {
   user.email = "ilia.shimozerov@gmail.com";
   user.password = "123";
   await user.save();
+
+  let users = await User.find();
+
+  let board = new Board();
+  board.name = "Канбанy";
+  board.author = users[1]._id;
+  board.description = "Тестовый канбан";
+  await board.save();
 
   let kanban = await Board.findOne();
 
@@ -51,9 +54,9 @@ export async function GET(request) {
   let access = new Access();
   access.user_id = user._id;
   access.board_id = kanban._id;
+  await access.save();
 
   let statuses = await Status.find();
-  let users = await User.find();
 
   let task = new Task();
   task.board_id = kanban._id;

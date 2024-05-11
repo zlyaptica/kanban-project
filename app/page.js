@@ -4,24 +4,17 @@ import { Popup } from "@/components/Popup";
 import { SignIn } from "@/components/SignIn";
 import { SignUp } from "@/components/SignUp";
 import Link from "next/link";
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
-import UseLocalStorage from "./hooks/UseLocalStorage";
 
-export default function Home  () {
-  const id = "663a59e96623dac88b959d27";
-
-  const [isAuthenticatedUser, setIsAuthenticatedUser] = UseLocalStorage(
-    "isAuthenticatedUser",
-    ""
-  );
-  const [user, setUserData] = UseLocalStorage("user", "");
-  if (isAuthenticatedUser) {
-    redirect(`/workplace/board/${id}`);
-  }
-
+export default function Home() {
   const [SignInPopupActive, setSignInPopupActive] = useState(false);
   const [SignUpPopupActive, setPopupSignUpActive] = useState(false);
+
+  useEffect(() => {
+    const isAuthenticatedUser = localStorage.getItem("isAuthenticatedUser");
+    if (isAuthenticatedUser) redirect("/workplace", "push");
+  }, []);
 
   return (
     <div>
@@ -38,8 +31,8 @@ export default function Home  () {
         </h1>
         <Popup active={SignInPopupActive} setActive={setSignInPopupActive}>
           <SignIn
+            setSignInPopupActive={setSignInPopupActive}
             setPopupSignUpActive={setPopupSignUpActive}
-            setPopupSignInActive={setSignInPopupActive}
           />
         </Popup>
         <Popup active={SignUpPopupActive} setActive={setPopupSignUpActive}>

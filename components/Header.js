@@ -22,7 +22,7 @@ export default async function Header() {
                                 <Link className="nav-link" href={"/"}>Мои задачи</Link>
                             </li>
                             <li className="nav-item">
-                                <Link className="nav-link" href={`/workplace/board/${id}`}>Kanban</Link>
+                                <Link className="nav-link" href={`/workplace`}>Мои доски</Link>
                             </li>
                         </ul>
                         <Image alt="profile" src={profile} width={40} height={40} />

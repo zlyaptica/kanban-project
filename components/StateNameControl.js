@@ -7,7 +7,10 @@ const StateNameControl = (props) => {
   const [inputValue, setInputValue] = useState("");
 
   const headerTaskControl = styles.newStateButton + " " + styles.createTask;
-  const inputStyles = props.action == Action.updateStateName ? styles.input + " " + styles.statusInput : styles.input
+  const inputStyles =
+    props.action == Action.updateStateName
+      ? styles.input + " " + styles.statusInput
+      : styles.input;
 
   let headerControl =
     props.action == Action.createTask
@@ -31,10 +34,6 @@ const StateNameControl = (props) => {
     }
   };
 
-  const confirmButton = () => {
-    props.createStatus(inputValue)
-  };
-
   // const handleKeyDown = (e) => {
   //     if (e.keyCode === 27) {
   //         setIsActiveInput(false)
@@ -49,19 +48,27 @@ const StateNameControl = (props) => {
   //     }
   // }
 
-  // const confirmButton = () => {
-  //     if (inputValue) {
-  //         if (props.status == Status.createState) props.confirmButton(inputValue)
-  //         if (props.status == Status.updateStateName) props.confirmButton(inputValue, props.stateID)
-  //         if (props.status == Status.createTask) props.confirmButton(props.stateID, props.tasks, inputValue)
-  //         if (props.status == Status.updateTaskName) props.confirmButton(props.stateID, inputValue)
+  const confirmButton = () => {
+    if (inputValue) {
+      if (props.status == Action.createState) props.confirmButton(inputValue);
+      if (props.status == Action.updateStateName)
+        props.confirmButton(inputValue, props.stateID);
+      if (props.status == Action.createTask)
+        props.confirmButton(props.stateID, props.tasks, inputValue);
+      if (props.status == Action.updateTaskName)
+        props.confirmButton(props.stateID, inputValue);
+      if (props.status == Action.createBoard) props.confirmButton(inputValue);
 
-  //         if (props.status == Status.createState || props.status == Status.createTask) {
-  //             setInputValue('')
-  //         }
-  //     }
-  //     setIsActiveInput(false)
-  // }
+      if (
+        props.status == Action.createState ||
+        props.status == Action.createTask ||
+        props.status == Action.createBoard
+      ) {
+        setInputValue("");
+      }
+    }
+    setIsActiveInput(false);
+  };
 
   useEffect(() => {
     if (props.action == Action.updateStateName) setInputValue(props.stateName);
