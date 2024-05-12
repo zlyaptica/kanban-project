@@ -1,8 +1,5 @@
 import styles from "@/styles/Status.module.css";
 import "bootstrap/dist/css/bootstrap.css";
-
-import deleteIcon from "../public/deleteIcon.svg";
-import Image from "next/image";
 // import { useState } from 'react'
 import { Action } from "@/utils/Enums";
 import { StateNameControl } from "./StateNameControl";
@@ -131,8 +128,37 @@ const Status = (props) => {
     console.log("типа создали");
   };
 
-  const deleteState = (state) => {
-    console.log("типа удалили");
+  const deleteStatus = async (state) => {
+    if (props.status.tasks.length != 0) {
+      // props.setRemovableState(state);
+      // props.setDeleteNotEmptyBoardPopupActive(true);
+    } else {
+      let user
+      if (typeof window !== "undefined") {
+          user = JSON.parse(localStorage.getItem("user"))
+      }
+      console.log("props.boardID", props.boardID)
+      console.log("user._id", user._id)
+      const response = await fetch(`/api/board/${props.boardID}/statuses/${props.status._id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          is_save_tasks: false,
+          board_id: props.boardID,
+          author_id: user._id,
+        }),
+      })
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        console.log(data.boardData);
+        props.setStatuses(await data.boardData);
+      }
+    }
   };
 
   const updateStateName = (name, stateID) => {
@@ -149,14 +175,14 @@ const Status = (props) => {
       <div className={styles.stateHeader}>
         <div className={styles.stateNameControl}>
           <StateNameControl
-           className={styles.stateNameControl}
+            className={styles.stateNameControl}
             action={Action.updateStateName}
-            // statusID={status._id}
+            statusID={props.status._id}
             nameControlHeader={props.status.name}
             act="Введите название статуса"
           />
         </div>
-        <StatusMenu status={props.status} />
+        <StatusMenu status={props.status} deleteStatus={deleteStatus}/>
       </div>
       <div className={styles.tasks}>
         <div className={styles.createTask}>

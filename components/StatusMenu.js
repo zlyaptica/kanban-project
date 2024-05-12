@@ -51,6 +51,7 @@ const StatusMenu = (props) => {
           <button
             className={styles.dropdownItem + " " + styles.deleteStatus}
             type="button"
+            onClick={props.deleteStatus}
           >
             Удалить
           </button>

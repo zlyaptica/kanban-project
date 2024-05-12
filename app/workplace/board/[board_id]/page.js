@@ -23,7 +23,12 @@ export default function Board({ params }) {
     : styles.sidebar;
 
   const createStatus = async (name) => {
-    const res = await fetch(`/api/board/${boardID}/statuses`, {
+    let user
+    if (typeof window !== "undefined") {
+        user = JSON.parse(localStorage.getItem("user"))
+    }
+
+    const response = await fetch(`/api/board/${boardID}/statuses`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -31,10 +36,16 @@ export default function Board({ params }) {
       },
       body: JSON.stringify({
         name: name,
+        author_id: user._id,
       }),
     });
-    const resJson = await res.json();
-    setStatuses(await resJson.statusTasks);
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 201) {
+      console.log(data.message);
+      setStatuses(await data.boardData);
+    }
   };
 
   const openTaskInfo = (task) => {
@@ -59,8 +70,7 @@ export default function Board({ params }) {
           board_id: boardID,
         }),
       });
-      let data = await response.json()
-      console.log("с серва пришло:", data.message)
+      let data = await response.json();
       response = await fetch(`/api/board/${boardID}/statuses`);
       data = await response.json();
       setStatuses(data.statusTasks);
@@ -82,7 +92,7 @@ export default function Board({ params }) {
         {statuses &&
           statuses.map((status, key) => (
             <div key={key}>
-              <Status status={status} openTaskInfo={openTaskInfo} />
+              <Status status={status} openTaskInfo={openTaskInfo} boardID={boardID} setStatuses={setStatuses}/>
             </div>
           ))}
         <div className={"p-2 m-2"}>
@@ -90,7 +100,7 @@ export default function Board({ params }) {
             status={Action.createState}
             nameControlHeader="Создать новый статус"
             act="Создать новый статус"
-            create={createStatus}
+            confirmButton={createStatus}
           />
         </div>
       </div>
