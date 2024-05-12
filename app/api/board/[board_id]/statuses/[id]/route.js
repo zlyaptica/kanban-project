@@ -1,35 +1,56 @@
-import { GetBoardData } from '@/utils/GetBoardData';
-import dbConnect from '@/lib/dbConnect';
-import Status from '@/models/Status';
-import { NextResponse } from 'next/server'
+import { GetBoardData } from "@/utils/GetBoardData";
+import dbConnect from "@/lib/dbConnect";
+import Status from "@/models/Status";
+import { NextResponse } from "next/server";
+import Board from "@/models/Board";
 
-export async function DELETE(request, {params}) {
-    await dbConnect()
+export async function DELETE(request, { params }) {
+  await dbConnect();
+  const board_id = params.board_id;
+  const status_id = params.id;
+  const data = await request.json();
 
-    Status.findByIdAndDelete(params.id)
+  const board = await Board.findOne({ _id: board_id });
 
-    let boardData = await GetBoardData()
+  if (board.author == data.author_id) {
+    await Status.findByIdAndDelete(status_id);
+    const boardData = await GetBoardData(board_id);
 
-    return (NextResponse.json({
-        message: 'status deleted',
-        boardData: boardData
-    }))
+    return NextResponse.json(
+      {
+        message: "status deleted",
+        boardData: boardData,
+      },
+      {
+        status: 200,
+      }
+    );
+  }
+  return NextResponse.json(
+    {
+      message: "you are not board creator",
+    },
+    { status: 403 }
+  );
 }
 
-export async function POST(request, {params}) {
-    await dbConnect()
+export async function POST(request, { params }) {
+  await dbConnect();
 
-    const requestBody = request.body
-    
-    Status.findByIdAndUpdate(params.id, {name : requestBody.name, type : requestBody.type})
+  const requestBody = request.body;
 
-    let updatedStatus = Status.findById(params.id)
+  Status.findByIdAndUpdate(params.id, {
+    name: requestBody.name,
+    type: requestBody.type,
+  });
 
-    let boardData = await GetBoardData()
+  let updatedStatus = Status.findById(params.id);
 
-    return (NextResponse.json({
-        message: 'status updated',
-        status: updatedStatus,
-        boardData: boardData
-    }))
+  let boardData = await GetBoardData();
+
+  return NextResponse.json({
+    message: "status updated",
+    status: updatedStatus,
+    boardData: boardData,
+  });
 }
