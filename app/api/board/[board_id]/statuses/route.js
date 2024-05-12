@@ -15,20 +15,24 @@ export async function GET(request, { params }) {
 
 export async function POST(request, { params }) {
   await dbConnect();
-
   const board_id = params.board_id;
   const data = await request.json();
 
   const board = await Board.findOne({ _id: board_id });
 
   if (board.author == data.author_id) {
-    await Board.findByIdAndUpdate({ _id: board_id }, { name: data.name });
-    const updatedBoard = await Board.findById({ _id: board_id });
+    let status = new Status();
+    status.board_id = board_id;
+    status.name = data.name;
+    await status.save();
+
+    let boardData = await GetBoardData(board_id);
     return NextResponse.json(
       {
-        updatedBoard,
+        message: "status created",
+        boardData: boardData,
       },
-      { status: 200 }
+      { status: 201 }
     );
   }
   return NextResponse.json(
