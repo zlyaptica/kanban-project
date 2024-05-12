@@ -26,3 +26,8 @@
 .sidebarOpen {
     display: block;
 }
+
+.boardName {
+    margin: 0;
+    margin-right: 10px;
+}

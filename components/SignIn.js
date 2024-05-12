@@ -1,5 +1,4 @@
-import { navigate } from "@/app/actions";
-import { redirect } from "next/navigation";
+import { navigateToWorkplace } from "@/app/actions";
 import { useState } from "react";
 
 const SignIn = (props) => {
@@ -31,7 +30,7 @@ const SignIn = (props) => {
         localStorage.setItem("user", JSON.stringify(user.user));
       }
       props.setSignInPopupActive(false);
-      navigate()
+      navigateToWorkplace()
     }
   };
   return (

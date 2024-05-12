@@ -6,10 +6,13 @@ import { StateNameControl } from "@/components/StateNameControl";
 import { Action } from "@/utils/Enums";
 import Image from "next/image";
 import deleteIcon from "../../public/deleteIcon.svg";
+import editIcon from "../../public/editIcon.svg";
 
 export default function MyBoards() {
   const [boards, setBoards] = useState("");
-  const [userInfo, setUserInfo] = useState("");
+  const [editBoardNameInputValue, setEditBoardNameInputValue] = useState("");
+  const [editBoardNameInputActive, setEditBoardNameInputActive] =
+    useState(false);
 
   const createBoard = async (name) => {
     let user;
@@ -62,15 +65,6 @@ export default function MyBoards() {
               >
                 {board.name}
               </Link>
-              <div className={"cursor-pointer ml-auto p-1"}>
-                <Image
-                  src={deleteIcon}
-                  height={15}
-                  width={15}
-                  alt="Удалить задачу"
-                  onClick={() => deleteTask(props.task._id)}
-                />
-              </div>
             </div>
           ))}
       </div>
