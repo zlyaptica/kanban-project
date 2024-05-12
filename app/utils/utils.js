@@ -11,16 +11,26 @@ export async function GetBoardData(){
     for (let i = 0; i < statuses.length; i++){
         let tasks = await Task.find({"status" : statuses[i]})
 
-        tasks.forEach(task => {
+        let tasksData = []
+
+        for (let taskID = 0; taskID < tasks.length; taskID++) {
+            const task = tasks[taskID]
+            
             let doer = User.findById(task.doer)
-            task.doer = doer.name
-        });
+
+            let taskData = {
+                task: task,
+                doerName: doer.name
+            }
+
+            tasksData.push(taskData)
+        }
 
         const filledStatus = {
             _id: statuses[i]._id,
             board: statuses[i].board,
             name: statuses[i].name,
-            tasks: tasks
+            tasksData: tasksData
         }
 
         statusWithTasks.push(filledStatus)
