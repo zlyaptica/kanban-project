@@ -101,12 +101,11 @@ export default function Board({ params }) {
     if (response.status == 403) {
       console.log(data.message);
     } else if (data.status == 200) {
-      navigateToWorkplace()
+      navigateToWorkplace();
     }
   };
 
   const openTaskInfo = (task) => {
-    console.log(task);
     setCurrentOpenTaskSidebarData(task);
     setIsSidebarOpen(true);
   };
@@ -126,20 +125,24 @@ export default function Board({ params }) {
   };
 
   useEffect(() => {
-    async function getStatuses(user_id) {
-      let response = await fetch(`/api/users/${user_id}/boards`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          board_id: boardID,
-        }),
-      });
-      let data = await response.json();
-      response = await fetch(`/api/board/${boardID}/statuses`);
-      data = await response.json();
+    async function getStatuses(user_id, isAuthorized) {
+      if (isAuthorized) {
+        const response = await fetch(`/api/users/${user_id}/boards`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            board_id: boardID,
+            isAuthorized: isAuthorized
+          }),
+        });
+        let data = await response.json();
+        console.log(data.message)
+      }
+      const response = await fetch(`/api/board/${boardID}/statuses`);
+      const data = await response.json();
       setStatuses(data.statusTasks);
       setBoardData(data.board);
     }
@@ -148,9 +151,9 @@ export default function Board({ params }) {
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
       if (user) {
-        getStatuses(user._id);
+        getStatuses(user._id, true);
       } else {
-        console.log("вы не авторизованы");
+        getStatuses(user._id, false);
       }
     }
   }, []);
@@ -173,6 +176,7 @@ export default function Board({ params }) {
                       onChange={(e) =>
                         setEditBoardNameInputValue(e.target.value)
                       }
+                      onBlur={() => setEditBoardNameInputActive(false)}
                     />
                   )}
                   <li className="nav-item">

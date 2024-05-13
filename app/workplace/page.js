@@ -39,6 +39,7 @@ export default function MyBoards() {
     const getUserBoards = async (user_id) => {
       const response = await fetch(`/api/users/${user_id}/boards`);
       const data = await response.json();
+      console.log(data.boards)
       setBoards(data.boards);
     };
     if (typeof window !== "undefined") {

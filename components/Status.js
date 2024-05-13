@@ -188,7 +188,6 @@ const Status = (props) => {
         <div className={styles.createTask}>
           <StateNameControl
             action={Action.createTask}
-            // statusID={status._id}
             nameControlHeader="Создать задачу"
             act="Создать задачу"
             tasks={props.status.tasks}

@@ -3,14 +3,12 @@ import dbConnect from "@/lib/dbConnect";
 import Status from "@/models/Status";
 import { NextResponse } from "next/server";
 import Board from "@/models/Board";
-import Access from "@/models/Access";
 
 export async function GET(request, { params }) {
   const board_id = params.board_id;
   const board = await Board.findOne({ _id: board_id });
-  const statusTasks = await GetBoardData(board_id);
-
-  return NextResponse.json({ statusTasks: statusTasks, board: board });
+  const statusTasks = await GetBoardData(board._id);
+  return NextResponse.json({ statusTasks, board });
 }
 
 export async function POST(request, { params }) {

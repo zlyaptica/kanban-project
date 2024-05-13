@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "@/styles/StatusMenu.module.css";
 
 const StatusMenu = (props) => {
+  const [selectValue, setSelectValue] = useState("");
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const [isOpenSelectTypeStatus, setIsOpenSelectTypeStatus] = useState(false);
 
@@ -9,6 +10,15 @@ const StatusMenu = (props) => {
     setIsOpenMenu(!isOpenMenu);
     setIsOpenSelectTypeStatus(false);
   };
+
+  const updateStatusType = (e) => {
+    console.log(e.target.value)
+    
+  }
+
+  useEffect(() => {
+    setSelectValue(props.status.type)
+  }, [selectValue])
 
   return (
     <div className={"dropdown align-middle"}>
@@ -35,7 +45,8 @@ const StatusMenu = (props) => {
             <select
               className={styles.selectTypeStatus}
               size="3"
-              value={props.status.type}
+              value={selectValue}
+              onChange={(e) => updateStatusType(e)}
             >
               <option id="TODO" className={styles.option}>
                 TODO

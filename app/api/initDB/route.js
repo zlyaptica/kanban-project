@@ -41,12 +41,14 @@ export async function GET(request) {
 
   let status = new Status();
   status.board_id = kanban._id;
+  status.type = "TODO"
   status.name = "Надо сделать";
   status.index = 0;
   await status.save();
 
   status = new Status();
   status.board_id = kanban._id;
+  status.type = "DONE"
   status.name = "Сделано";
   status.index = 1;
   await status.save();
@@ -63,7 +65,7 @@ export async function GET(request) {
   task.name = "Сделать канбан";
   task.description = "Надо сделать канбан";
   task.status = statuses[0]._id;
-  task.doer = users[0]._id;
+  task.doer = users[1]._id;
   task.index = 0;
   await task.save();
 

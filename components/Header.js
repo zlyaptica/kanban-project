@@ -3,10 +3,19 @@ import logo from "../public/kanbanlogo.png";
 import profile from "../public/profile.svg";
 import Link from "next/link";
 import { useEffect } from "react";
+import { navigateToHome } from "@/app/actions";
 
 export default async function Header() {
-  const id = "663a59e96623dac88b959d27";
 
+  const updateDBData = async () => {
+    const response = await fetch(`/api/initDB`)
+    const data = await response.json()
+    console.log(data.message)
+    navigateToHome()
+    localStorage.removeItem("isAuthenticatedUser")
+    localStorage.removeItem("user")
+
+  }
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -35,6 +44,11 @@ export default async function Header() {
               <Link className="nav-link" href={`/workplace`}>
                 Мои доски
               </Link>
+            </li>
+            <li className="nav-item">
+              <button className="nav-link" onClick={() => updateDBData()}>
+                Загрузить данные в монгу
+              </button>
             </li>
           </ul>
           <Image alt="profile" src={profile} width={40} height={40} />

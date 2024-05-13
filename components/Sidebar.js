@@ -169,7 +169,7 @@ const Sidebar = (props) => {
               <div className={"d-flex align-items-center"}>
                 <input
                   type="text"
-                  className={styles.subtaskInput}
+                  // className={styles.subtaskInput}
                   placeholder="Введите название..."
                   value={createSubtaskInputValue}
                   onChange={(e) => setCreateSubtaskInputValue(e.target.value)}

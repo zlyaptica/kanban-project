@@ -44,7 +44,7 @@ const SignIn = (props) => {
             className="form-control"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
-            autoComplete="on"
+            // autoComplete="on" 
           />
         </div>
         <div className="mb-3">
@@ -54,7 +54,7 @@ const SignIn = (props) => {
             className="form-control"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
-            autoComplete="on"
+            // autoComplete="on"
           />
         </div>
         <button type="submit" className="btn btn-primary">

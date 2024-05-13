@@ -7,10 +7,6 @@ const StateNameControl = (props) => {
   const [inputValue, setInputValue] = useState("");
 
   const headerTaskControl = styles.newStateButton + " " + styles.createTask;
-  const inputStyles =
-    props.action == Action.updateStateName
-      ? styles.input + " " + styles.statusInput
-      : styles.input;
 
   let headerControl =
     props.action == Action.createTask
@@ -89,7 +85,6 @@ const StateNameControl = (props) => {
         <div className={styles.inputControl}>
           <form>
             <input
-              className={inputStyles}
               type="text"
               name="stateName"
               placeholder={props.act}
