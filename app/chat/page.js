@@ -4,11 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import styles from './chat.module.css'
 
-let currentUser = {
-    "_id": "66212135ac07340e285d4309",
-    "name": "Илья Шимозёров"
-}
-
 const socket = io();
 function getLocalTime(date) {
     const localTime = new Date(date).toLocaleTimeString("en-US", {
@@ -50,7 +45,11 @@ export default function Chat() {
             setMessages(current => [...current, ...resJson])
             messagesRef.current = [...messagesRef.current, ...resJson]
         };
-        Get()
+        const isAuthenticatedUser = localStorage.getItem("isAuthenticatedUser");
+        if (isAuthenticatedUser) {
+            Get()
+        }
+
         // Create a socket connection  
         socket.connect()
         // Listen for incoming messages
@@ -59,7 +58,7 @@ export default function Chat() {
         socket.on('broadcastNewMessage', (newMsg) => {
             messagesRef.current = [...messagesRef.current, newMsg]
             setMessages([...messagesRef.current])
-            
+
             console.log("newmsg loaded", messagesRef.current)
         })
         socket.on('broadcastDelete', (msg) => {
@@ -73,7 +72,7 @@ export default function Chat() {
             console.log("updateMessage")
             console.log(messagesRef.current)
             console.log(msg)
-            let index = messagesRef.current.findIndex(obj =>  obj._id == msg._id )
+            let index = messagesRef.current.findIndex(obj => obj._id == msg._id)
             console.log(index)
             if (index != -1) {
                 messagesRef.current[index] = msg
@@ -89,12 +88,13 @@ export default function Chat() {
 
     const handleBtnClick = () => {
         if (newMessage != '') {
-            // сюда надо полностью сформированное сообщение согласно модели Message сейчас заглушка
+            const currentUser=JSON.parse(localStorage.getItem("user"))
             let Msg = {
                 'text': newMessage,
-                'authorData': currentUser,
+                'authorData': {'_id': currentUser._id, 'name': currentUser.name},
                 'date': new Date(),
             }
+            console.log(Msg)
             Request(Msg, 'PUT').then((result) => {
                 Msg._id = result.messageID
                 console.log(messagesRef.current)
@@ -125,7 +125,7 @@ export default function Chat() {
                 let msgs = [...messagesRef.current]
                 msgs[index] = editMessage
                 setMessages(msgs)
-                messagesRef.current=msgs
+                messagesRef.current = msgs
                 console.log(msgs[index])
                 socket.emit("updateMessage", msgs[index])
             } else {
@@ -140,7 +140,7 @@ export default function Chat() {
             <ol className="list-group list-group-numbered">
                 {
 
-messagesRef.current.map((message, key) =>
+                    messagesRef.current.map((message, key) =>
                         <li key={key} className="list-group-item d-flex justify-content-between align-items-start">
                             <div className='col'>
                                 <div className="ms-2 me-auto">
