@@ -21,6 +21,7 @@ export async function POST(request, { params }) {
   if (board.author == data.author_id) {
     let status = new Status();
     status.board_id = board_id;
+    status.type = data.type
     status.name = data.name;
     await status.save();
 

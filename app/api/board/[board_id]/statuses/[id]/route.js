@@ -1,4 +1,4 @@
-import { GetBoardData } from "@/utils/GetBoardData";
+import { GetBoardData, GetStatusData } from "@/utils/GetBoardData";
 import dbConnect from "@/lib/dbConnect";
 import Status from "@/models/Status";
 import { NextResponse } from "next/server";
@@ -37,20 +37,28 @@ export async function DELETE(request, { params }) {
 export async function POST(request, { params }) {
   await dbConnect();
 
-  const requestBody = request.body;
+  const data = await request.json();
 
-  Status.findByIdAndUpdate(params.id, {
-    name: requestBody.name,
-    type: requestBody.type,
-  });
+  if (data.field == "type") {
+    await Status.findByIdAndUpdate(params.id, {
+      type: data.type,
+    });
+  }
 
-  let updatedStatus = Status.findById(params.id);
+  if (data.field == "name") {
+    await Status.findByIdAndUpdate(params.id, {
+      name: data.name,
+    });
+  }
 
-  let boardData = await GetBoardData();
+  let updatedStatus = await Status.findById(params.id); 
+  let statusData = await GetStatusData(updatedStatus)
+
+  let boardData = await GetBoardData(params.board_id);
 
   return NextResponse.json({
     message: "status updated",
-    status: updatedStatus,
+    status: statusData,
     boardData: boardData,
   });
 }
