@@ -6,6 +6,7 @@ import Board from "@/models/Board";
 
 export async function GET(request, { params }) {
   const board_id = params.board_id;
+  
   const board = await Board.findOne({ _id: board_id });
   const statusTasks = await GetBoardData(board._id);
   return NextResponse.json({ statusTasks, board });

@@ -180,8 +180,32 @@ const Status = (props) => {
     }
   };
 
-  const updateStatusName = (name, stateID) => {
-    console.log("типа обновили");
+  const updateStatusName = async (name) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    if (user) {
+      const response = await fetch(
+        `/api/board/${props.boardID}/statuses/${props.status._id}`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            author_id: user._id,
+            name: name,
+            type: "name",
+          }),
+        }
+      );
+      const data = await response.json();
+      console.log(data.message)
+      props.setStatuses(data.boardData);
+      setStatus(data.status);
+    }
   };
 
   const updateStatusType = async (type) => {
@@ -189,24 +213,26 @@ const Status = (props) => {
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
     }
-    const response = await fetch(
-      `/api/board/${props.boardID}/statuses/${props.status._id}`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          author_id: user._id,
-          type: type,
-          field: "type",
-        }),
-      }
-    );
-    const data = await response.json();
-    props.setStatuses(data.boardData);
-    setStatus(data.status);
+    if (user) {
+      const response = await fetch(
+        `/api/board/${props.boardID}/statuses/${props.status._id}`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            author_id: user._id,
+            type: type,
+            field: "type",
+          }),
+        }
+      );
+      const data = await response.json();
+      props.setStatuses(data.boardData);
+      setStatus(data.status);
+    }
   };
 
   let statusColor;
@@ -226,7 +252,9 @@ const Status = (props) => {
             className={styles.stateNameControl}
             action={Action.updateStateName}
             nameControlHeader={status.name}
+            inputValue={status.name}
             act="Введите название статуса"
+            confirmButton={updateStatusName}
           />
         </div>
         <StatusMenu

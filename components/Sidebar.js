@@ -19,19 +19,39 @@ const Sidebar = (props) => {
     ? styles.setDoneButton + " " + "btn btn-success"
     : styles.setDoneButton + " " + "btn btn-outline-success";
 
-  const updateTaskName = (taskID, name) => {
-    console.log("update");
+  const updateTaskName = async (name) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    if (user) {
+      const response = await fetch(`/api/tasks/${props.task._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          name: name,
+          type: "name",
+        }),
+      });
+      const data = await response.json();
+      props.setStatuses(data.boardData)
+      console.log(data.updatedTask)
+      props.setTask(data.updatedTask)
+    }
   };
 
-  const deleteTask = async (task_id) => {
+  const deleteTask = async () => {
     let user;
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
     }
 
     if (user) {
-
-      const response = await fetch(`/api/tasks/${task_id}`, {
+      const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -40,12 +60,11 @@ const Sidebar = (props) => {
         body: JSON.stringify({
           author_id: user._id,
         }),
-      })
-      const data = await response.json()
+      });
+      const data = await response.json();
       if (response.status == 403) {
         console.log(data.message);
       } else if (response.status == 200) {
-        console.log(data);
         props.setStatuses(data.boardData);
       }
     }
@@ -58,9 +77,9 @@ const Sidebar = (props) => {
   const updateTaskDescription = (taskID) => {};
 
   const cancelCreateSubtask = () => {
-    setCreateSubtaskInputActive(false)
-    setCreateSubtaskInputValue("")
-  }
+    setCreateSubtaskInputActive(false);
+    setCreateSubtaskInputValue("");
+  };
 
   useEffect(() => {
     setDescription(props.task.description);
@@ -71,7 +90,7 @@ const Sidebar = (props) => {
     } else {
       setDeadline("");
     }
-  }, [props.task.description, props.task.deadline]);
+  }, [props.task]);
   return (
     <div className={styles.sidebar}>
       <div className={"mt-3"}>
@@ -105,7 +124,7 @@ const Sidebar = (props) => {
         <div className={styles.stateNameControl}>
           <StateNameControl
             action={Action.updateTaskName}
-            statusID={props.task._id}
+            inputValue={props.task.name}
             nameControlHeader={props.task.name}
             confirmButton={updateTaskName}
             act="Изменить"
@@ -200,7 +219,11 @@ const Sidebar = (props) => {
                   <button className="btn" type="button">
                     Создать
                   </button>
-                  <button className="btn" type="button" onClick={() => cancelCreateSubtask()}>
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={() => cancelCreateSubtask()}
+                  >
                     Отменить
                   </button>
                 </div>
@@ -214,11 +237,12 @@ const Sidebar = (props) => {
               </button>
             )}
           </div>
-          {props.task.subtasks && props.task.subtasks.map((subtask, key) => (
-            <div key={key}>
-              <Subtask subtask={subtask}/>
-            </div>
-          ))}
+          {props.task.subtasks &&
+            props.task.subtasks.map((subtask, key) => (
+              <div key={key}>
+                <Subtask subtask={subtask} />
+              </div>
+            ))}
         </div>
       </div>
     </div>

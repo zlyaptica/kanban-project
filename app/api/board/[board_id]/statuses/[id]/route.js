@@ -39,13 +39,13 @@ export async function POST(request, { params }) {
 
   const data = await request.json();
 
-  if (data.field == "type") {
+  if (data.type == "type") {
     await Status.findByIdAndUpdate(params.id, {
       type: data.type,
     });
   }
 
-  if (data.field == "name") {
+  if (data.type == "name") {
     await Status.findByIdAndUpdate(params.id, {
       name: data.name,
     });

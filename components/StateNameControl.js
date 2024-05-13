@@ -46,14 +46,7 @@ const StateNameControl = (props) => {
 
   const confirmButton = () => {
     if (inputValue) {
-      if (props.action == Action.createState) props.confirmButton(inputValue);
-      if (props.action == Action.updateStateName)
-        props.confirmButton(inputValue, props.stateID);
-      if (props.action == Action.createTask)
-        props.confirmButton(inputValue);
-      if (props.action == Action.updateTaskName)
-        props.confirmButton(props.stateID, inputValue);
-      if (props.action == Action.createBoard) props.confirmButton(inputValue);
+      props.confirmButton(inputValue);
 
       if (
         props.action == Action.createState ||
@@ -61,14 +54,16 @@ const StateNameControl = (props) => {
         props.action == Action.createBoard
       ) {
         setInputValue("");
+      } else {
+        setInputValue(props.inputValue)
       }
     }
     setIsActiveInput(false);
   };
 
   useEffect(() => {
-    if (props.action == Action.updateStateName) setInputValue(props.stateName);
-    if (props.action == Action.updateTaskName) setInputValue(props.stateName);
+    if (props.action == Action.updateStateName) setInputValue(props.inputValue);
+    if (props.action == Action.updateTaskName) setInputValue(props.inputValue);
   }, [props.action, props.nameControlHeader]);
 
   return (

@@ -137,7 +137,6 @@ export default function Board({ params }) {
           },
           body: JSON.stringify({
             board_id: boardID,
-            isAuthorized: isAuthorized,
           }),
         });
         let data = await response.json();
@@ -155,7 +154,7 @@ export default function Board({ params }) {
       if (user) {
         getStatuses(user._id, true);
       } else {
-        getStatuses(user._id, false);
+        getStatuses(false);
       }
     }
   }, []);
@@ -248,6 +247,7 @@ export default function Board({ params }) {
         {isSidebarOpen ? (
           <Sidebar
             task={currentOpenTaskSidebarData}
+            setTask={setCurrentOpenTaskSidebarData}
             setIsSidebarOpen={setIsSidebarOpen}
             setStatuses={setStatuses}
           />

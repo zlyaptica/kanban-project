@@ -2,6 +2,7 @@ import dbConnect from "@/lib/dbConnect";
 import { NextResponse } from "next/server";
 import Board from "@/models/Board";
 import Access from "@/models/Access";
+import mongoose from "mongoose";
 
 export async function GET(request, { params }) {
   await dbConnect();
@@ -21,11 +22,12 @@ export async function POST(request, { params }) {
   const user_id = params.user_id;
   const body = await request.json();
 
-  const isRelationshipExist = await Access.findOne({
+  const isRelationshipExist = await Access.find({
     user_id: user_id,
     board_id: body.board_id,
   });
   if (!isRelationshipExist) {
+
     let access = new Access();
     access.user_id = user_id;
     access.board_id = body.board_id;
