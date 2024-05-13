@@ -74,7 +74,7 @@ export async function GET(request) {
   task.name = "Сделать API";
   task.description = "Надо сделать API";
   task.status = statuses[1]._id;
-  task.doer = users[1]._id;
+  task.doer = users[0]._id;
   task.index = 0;
   await task.save();
 

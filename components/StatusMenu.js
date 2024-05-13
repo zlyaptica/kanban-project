@@ -12,13 +12,12 @@ const StatusMenu = (props) => {
   };
 
   const updateStatusType = (e) => {
-    console.log(e.target.value)
-    
+    props.updateStatusType(e.target.value)
   }
 
   useEffect(() => {
     setSelectValue(props.status.type)
-  }, [selectValue])
+  }, [props.status])
 
   return (
     <div className={"dropdown align-middle"}>
@@ -46,7 +45,7 @@ const StatusMenu = (props) => {
               className={styles.selectTypeStatus}
               size="3"
               value={selectValue}
-              onChange={(e) => updateStatusType(e)}
+              onChange={(e) => props.updateStatusType(e.target.value)}
             >
               <option id="TODO" className={styles.option}>
                 TODO

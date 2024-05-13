@@ -42,6 +42,7 @@ export default function Board({ params }) {
       body: JSON.stringify({
         name: name,
         author_id: user._id,
+        type: "TODO",
       }),
     });
     const data = await response.json();
@@ -135,11 +136,11 @@ export default function Board({ params }) {
           },
           body: JSON.stringify({
             board_id: boardID,
-            isAuthorized: isAuthorized
+            isAuthorized: isAuthorized,
           }),
         });
         let data = await response.json();
-        console.log(data.message)
+        console.log(data.message);
       }
       const response = await fetch(`/api/board/${boardID}/statuses`);
       const data = await response.json();

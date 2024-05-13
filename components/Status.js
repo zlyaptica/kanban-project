@@ -1,12 +1,13 @@
 import styles from "@/styles/Status.module.css";
 import "bootstrap/dist/css/bootstrap.css";
-// import { useState } from 'react'
 import { Action } from "@/utils/Enums";
 import { StateNameControl } from "./StateNameControl";
 import { Task } from "./Task";
 import { StatusMenu } from "./StatusMenu";
+import { useEffect, useState } from "react";
 
 const Status = (props) => {
+  const [status, setStatus] = useState("")
   //   const [currentState, setCurrentState] = useState(null)
   //   const [currentTask, setCurrentTask] = useState(null)
   //   const [isDraggedTask, setIsDraggedTask] = useState(false)
@@ -133,24 +134,25 @@ const Status = (props) => {
       // props.setRemovableState(state);
       // props.setDeleteNotEmptyBoardPopupActive(true);
     } else {
-      let user
+      let user;
       if (typeof window !== "undefined") {
-          user = JSON.parse(localStorage.getItem("user"))
+        user = JSON.parse(localStorage.getItem("user"));
       }
-      console.log("props.boardID", props.boardID)
-      console.log("user._id", user._id)
-      const response = await fetch(`/api/board/${props.boardID}/statuses/${props.status._id}`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          is_save_tasks: false,
-          board_id: props.boardID,
-          author_id: user._id,
-        }),
-      })
+      const response = await fetch(
+        `/api/board/${props.boardID}/statuses/${props.status._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            is_save_tasks: false,
+            board_id: props.boardID,
+            author_id: user._id,
+          }),
+        }
+      );
       const data = await response.json();
       if (response.status == 403) {
         console.log(data.message);
@@ -161,14 +163,43 @@ const Status = (props) => {
     }
   };
 
-  const updateStateName = (name, stateID) => {
+  const updateStatusName = (name, stateID) => {
     console.log("типа обновили");
+  };
+
+  const updateStatusType = async (type) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    const response = await fetch(
+      `/api/board/${props.boardID}/statuses/${props.status._id}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          type: type,
+          field: "type",
+        }),
+      }
+    );
+    const data = await response.json()
+    props.setStatuses(data.boardData)
+    setStatus(data.status)
   };
 
   let statusColor;
   if (props.status.type == "TODO") statusColor = styles.bgColorTODO;
   if (props.status.type == "DOING") statusColor = styles.bgColorDOING;
   if (props.status.type == "DONE") statusColor = styles.bgColorDONE;
+
+  useEffect(() => {
+    setStatus(props.status)
+  }, [])
 
   return (
     <div className={styles.statusBlock + " " + statusColor}>
@@ -177,12 +208,16 @@ const Status = (props) => {
           <StateNameControl
             className={styles.stateNameControl}
             action={Action.updateStateName}
-            statusID={props.status._id}
-            nameControlHeader={props.status.name}
+            statusID={status._id}
+            nameControlHeader={status.name}
             act="Введите название статуса"
           />
         </div>
-        <StatusMenu status={props.status} deleteStatus={deleteStatus}/>
+        <StatusMenu
+          status={status}
+          deleteStatus={deleteStatus}
+          updateStatusType={updateStatusType}
+        />
       </div>
       <div className={styles.tasks}>
         <div className={styles.createTask}>
@@ -190,11 +225,11 @@ const Status = (props) => {
             action={Action.createTask}
             nameControlHeader="Создать задачу"
             act="Создать задачу"
-            tasks={props.status.tasks}
+            tasks={status.tasks}
           />
         </div>
-        {props.status.tasks &&
-          props.status.tasks.map((task, key) => (
+        {status.tasks &&
+          status.tasks.map((task, key) => (
             <div key={key} className={styles.task}>
               <Task task={task} openTaskInfo={props.openTaskInfo} />
             </div>
