@@ -19,38 +19,43 @@ export default function MyBoards() {
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
     }
-    const response = await fetch(`/api/board`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify({
-        author_id: user._id,
-        name: name,
-      }),
-    });
-    const resJson = await response.json();
-    setBoards(resJson.boards);
+    if (user) {
+      const response = await fetch(`/api/board`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          name: name,
+        }),
+      });
+      const resJson = await response.json();
+      setBoards(resJson.boards);
+    }
   };
 
-  let user;
   useEffect(() => {
     const getUserBoards = async (user_id) => {
       const response = await fetch(`/api/users/${user_id}/boards`);
       const data = await response.json();
-      console.log(data.boards)
-      setBoards(data.boards);
+      if (data.boards) {
+        setBoards(data.boards);
+      } else {
+        console.log("нет досок")
+      }
     };
+    let user;
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
       getUserBoards(user._id);
     }
-  }, []);
+    }, []);
   return (
     <div className={"m-2"}>
       <StateNameControl
-        status={Action.createState}
+        action={Action.createState}
         nameControlHeader="Создать новую доску"
         act="Создать новую доску"
         confirmButton={createBoard}

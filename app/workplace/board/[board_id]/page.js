@@ -88,7 +88,7 @@ export default function Board({ params }) {
       user = JSON.parse(localStorage.getItem("user"));
     }
 
-    const response = await fetch(`/api/board/${boardID}/statuses`, {
+    const response = await fetch(`/api/board/${boardID}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
@@ -99,9 +99,10 @@ export default function Board({ params }) {
       }),
     });
     const data = await response.json();
+    console.log(data);
     if (response.status == 403) {
       console.log(data.message);
-    } else if (data.status == 200) {
+    } else if (response.status == 200) {
       navigateToWorkplace();
     }
   };
@@ -235,7 +236,7 @@ export default function Board({ params }) {
             ))}
           <div className={"p-2 m-2"}>
             <StateNameControl
-              status={Action.createState}
+              action={Action.createState}
               nameControlHeader="Создать новый статус"
               act="Создать новый статус"
               confirmButton={createStatus}
@@ -248,6 +249,7 @@ export default function Board({ params }) {
           <Sidebar
             task={currentOpenTaskSidebarData}
             setIsSidebarOpen={setIsSidebarOpen}
+            setStatuses={setStatuses}
           />
         ) : null}
       </div>

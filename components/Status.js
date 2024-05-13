@@ -7,26 +7,10 @@ import { StatusMenu } from "./StatusMenu";
 import { useEffect, useState } from "react";
 
 const Status = (props) => {
-  const [status, setStatus] = useState("")
+  const [status, setStatus] = useState("");
   //   const [currentState, setCurrentState] = useState(null)
   //   const [currentTask, setCurrentTask] = useState(null)
   //   const [isDraggedTask, setIsDraggedTask] = useState(false)
-
-  //   const createTask = async (stateID, tasks, taskName) => {
-  //       const body = {
-  //           boardID: stateID,
-  //           name: taskName,
-  //           is_completed: false,
-  //           creator: 'maxim',
-  //           created_at: new Date(),
-  //           start_date: '',
-  //           deadline: '',
-  //           description: '',
-  //           priority: '——',
-  //           index: tasks.length,
-  //       }
-  //       props.setStates(await CreateTask(body))
-  //   }
 
   //   const deleteState = async (state) => {
   //       if (state.tasks.length != 0) {
@@ -125,11 +109,44 @@ const Status = (props) => {
   //       setIsDraggedTask(false)
   //   }
 
-  const createTask = (stateID, tasks, taskName) => {
-    console.log("типа создали");
+  const createTask = async (taskName) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    const response = await fetch(
+      `/api//board/${props.boardID}/statuses/${props.status._id}/tasks`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          boardID: status._id,
+          name: taskName,
+          is_completed: false,
+          creator: user.name,
+          created_at: new Date(),
+          start_date: "",
+          deadline: "",
+          description: "",
+          priority: 0,
+          doer: "",
+          index: status.tasks.length,
+          author_id: user._id,
+        }),
+      }
+    );
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 201) {
+      setStatus(data.statusData);
+    }
   };
 
-  const deleteStatus = async (state) => {
+  const deleteStatus = async () => {
     if (props.status.tasks.length != 0) {
       // props.setRemovableState(state);
       // props.setDeleteNotEmptyBoardPopupActive(true);
@@ -187,9 +204,9 @@ const Status = (props) => {
         }),
       }
     );
-    const data = await response.json()
-    props.setStatuses(data.boardData)
-    setStatus(data.status)
+    const data = await response.json();
+    props.setStatuses(data.boardData);
+    setStatus(data.status);
   };
 
   let statusColor;
@@ -198,8 +215,8 @@ const Status = (props) => {
   if (props.status.type == "DONE") statusColor = styles.bgColorDONE;
 
   useEffect(() => {
-    setStatus(props.status)
-  }, [])
+    setStatus(props.status);
+  }, [props.status]);
 
   return (
     <div className={styles.statusBlock + " " + statusColor}>
@@ -208,7 +225,6 @@ const Status = (props) => {
           <StateNameControl
             className={styles.stateNameControl}
             action={Action.updateStateName}
-            statusID={status._id}
             nameControlHeader={status.name}
             act="Введите название статуса"
           />
@@ -226,6 +242,7 @@ const Status = (props) => {
             nameControlHeader="Создать задачу"
             act="Создать задачу"
             tasks={status.tasks}
+            confirmButton={createTask}
           />
         </div>
         {status.tasks &&

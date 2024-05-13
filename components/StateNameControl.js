@@ -46,19 +46,19 @@ const StateNameControl = (props) => {
 
   const confirmButton = () => {
     if (inputValue) {
-      if (props.status == Action.createState) props.confirmButton(inputValue);
-      if (props.status == Action.updateStateName)
+      if (props.action == Action.createState) props.confirmButton(inputValue);
+      if (props.action == Action.updateStateName)
         props.confirmButton(inputValue, props.stateID);
-      if (props.status == Action.createTask)
-        props.confirmButton(props.stateID, props.tasks, inputValue);
-      if (props.status == Action.updateTaskName)
+      if (props.action == Action.createTask)
+        props.confirmButton(inputValue);
+      if (props.action == Action.updateTaskName)
         props.confirmButton(props.stateID, inputValue);
-      if (props.status == Action.createBoard) props.confirmButton(inputValue);
+      if (props.action == Action.createBoard) props.confirmButton(inputValue);
 
       if (
-        props.status == Action.createState ||
-        props.status == Action.createTask ||
-        props.status == Action.createBoard
+        props.action == Action.createState ||
+        props.action == Action.createTask ||
+        props.action == Action.createBoard
       ) {
         setInputValue("");
       }

@@ -6,9 +6,9 @@ import Image from "next/image";
 import { TaskStickers } from "./TaskStickers";
 
 const Task = (props) => {
-  const taskPriority = props.task.priority ? props.task.priority : null
-  const taskStartDate = props.task.start_date ? props.task.start_date : null
-  const taskDeadline = props.task.deadline ? props.task.deadline : null
+  const taskPriority = props.task.priority ? props.task.priority : null;
+  const taskStartDate = props.task.start_date ? props.task.start_date : null;
+  const taskDeadline = props.task.deadline ? props.task.deadline : null;
 
   return (
     <div className={"d-flex align-items-start"}>
@@ -20,7 +20,9 @@ const Task = (props) => {
         className="me-1"
       />
       <div>
-        <p className={styles.taskDoer}>{props.task.doer.name}</p>
+        {props.task.doer ? (
+          <p className={styles.taskDoer}>{props.task.doer.name}</p>
+        ) : null}
         <p
           className={styles.taskHeader}
           onClick={() => props.openTaskInfo(props.task)}

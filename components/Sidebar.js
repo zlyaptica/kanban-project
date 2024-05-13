@@ -23,8 +23,32 @@ const Sidebar = (props) => {
     console.log("update");
   };
 
-  const deleteTask = (taskID) => {
-    console.log("delete task");
+  const deleteTask = async (task_id) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+
+    if (user) {
+
+      const response = await fetch(`/api/tasks/${task_id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+        }),
+      })
+      const data = await response.json()
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        console.log(data);
+        props.setStatuses(data.boardData);
+      }
+    }
   };
 
   const updateTaskDeadline = (taskID, e) => {};
@@ -74,7 +98,6 @@ const Sidebar = (props) => {
               height={20}
               width={20}
               alt="Удалить задачу"
-              className={"cursor-pointer ml-auto p-2"}
               onClick={() => deleteTask(props.task._id)}
             />
           </div>
@@ -169,7 +192,6 @@ const Sidebar = (props) => {
               <div className={"d-flex align-items-center"}>
                 <input
                   type="text"
-                  // className={styles.subtaskInput}
                   placeholder="Введите название..."
                   value={createSubtaskInputValue}
                   onChange={(e) => setCreateSubtaskInputValue(e.target.value)}
