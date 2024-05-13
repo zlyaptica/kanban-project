@@ -1,4 +1,4 @@
-import { GetBoardData } from "@/utils/GetBoardData";
+import { GetBoardData } from "@/utils/utility_methods";
 import dbConnect from "@/lib/dbConnect";
 import Status from "@/models/Status";
 import { NextResponse } from "next/server";

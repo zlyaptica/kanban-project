@@ -68,6 +68,7 @@ export async function GetStatusData(status) {
       _id: tasks[i]._id,
       name: tasks[i].name,
       description: tasks[i].description,
+      board_id: tasks[i].board_id,
       status: tasks[i].status,
       doer: doerData,
       index: tasks[i].index,
