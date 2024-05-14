@@ -59,7 +59,6 @@ export default function Board({ params }) {
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
     }
-
     const response = await fetch(`/api/board/${boardID}`, {
       method: "POST",
       headers: {
@@ -112,7 +111,7 @@ export default function Board({ params }) {
     setIsSidebarOpen(true);
   };
 
-  const setIsDone = async (taskID, isCompleted) => {
+  const setIsDone = async () => {
     console.log("тип пометили");
   };
 

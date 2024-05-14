@@ -181,6 +181,7 @@ const Status = (props) => {
   };
 
   const updateStatusName = async (name) => {
+    console.log("hello")
     let user;
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
@@ -197,12 +198,12 @@ const Status = (props) => {
           body: JSON.stringify({
             author_id: user._id,
             name: name,
-            type: "name",
+            field: "name",
           }),
         }
       );
       const data = await response.json();
-      console.log(data.message)
+      console.log("lol")
       props.setStatuses(data.boardData);
       setStatus(data.status);
     }

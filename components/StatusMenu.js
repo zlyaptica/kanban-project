@@ -11,10 +11,6 @@ const StatusMenu = (props) => {
     setIsOpenSelectTypeStatus(false);
   };
 
-  const updateStatusType = (e) => {
-    props.updateStatusType(e.target.value)
-  }
-
   useEffect(() => {
     setSelectValue(props.status.type)
   }, [props.status])

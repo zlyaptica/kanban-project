@@ -46,6 +46,7 @@ const StateNameControl = (props) => {
 
   const confirmButton = () => {
     if (inputValue) {
+      console.log("inputvalue", inputValue)
       props.confirmButton(inputValue);
 
       if (

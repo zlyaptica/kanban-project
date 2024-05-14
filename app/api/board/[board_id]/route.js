@@ -39,8 +39,8 @@ export async function DELETE(request, { params }) {
 
 export async function POST(request, { params }) {
   await dbConnect();
-
   const board_id = params.board_id;
+  console.log(board_id)
   const data = await request.json();
 
   const board = await Board.findOne({ _id: board_id });
