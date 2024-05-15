@@ -115,28 +115,30 @@ const Sidebar = (props) => {
       user = JSON.parse(localStorage.getItem("user"));
     }
     if (user) {
-      const response = await fetch(`/api/tasks/${props.task._id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          author_id: user._id,
-          doerEmail: taskMailDoer,
-          field: "doer",
-          type: "set",
-        }),
-      });
-      const data = await response.json();
-      if (response.status == 403) {
-        console.log(data.message);
-      } else if (response.status == 200) {
-        setIsTaskMailDoerInputActive(false);
-        setTaskMailDoer(taskMailDoer);
-        props.setStatuses(data.boardData);
-        props.setTask(data.updatedTask);
+      if (taskMailDoer !== props.task.doer.email) {
+        const response = await fetch(`/api/tasks/${props.task._id}`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            author_id: user._id,
+            doerEmail: taskMailDoer,
+            field: "doer",
+            type: "set",
+          }),
+        });
+        const data = await response.json();
+        if (response.status == 403) {
+          console.log(data.message);
+        } else if (response.status == 200) {
+          setTaskMailDoer(taskMailDoer);
+          props.setStatuses(data.boardData);
+          props.setTask(data.updatedTask);
+        }
       }
+      setIsTaskMailDoerInputActive(false);
     }
   };
 
@@ -411,25 +413,37 @@ const Sidebar = (props) => {
             </button>
           ) : null}
           {isTaskMailDoerInputActive ? (
-            <div className={"d-flex flex-row align-items-center"}>
+            <div className={"d-flex flex-column "} onBlur={() => setIsTaskMailDoerInputActive(false)}>
               <input
                 type="text"
                 name="taskMailDoer"
                 value={taskMailDoer}
+                autoFocus
                 onChange={(e) => setTaskMailDoer(e.target.value)}
               />
-              <Image
-                src={galochka}
-                height={25}
-                width={25}
-                alt="Выбрать исполнителя"
-                className="p-1"
-                onClick={() => chooseDoer()}
-              />
-              <button
-                className={styles.deleteStartDateButton + " " + "btn-close"}
-                onClick={() => clearDoer()}
-              ></button>
+              <div className="">
+                <button
+                  className="btn btn-link text-decoration-none"
+                  onClick={() => chooseDoer()}
+                >
+                  Сохранить
+                </button>
+                {props.task.doer ? (
+                  <button
+                    className="btn btn-link text-decoration-none"
+                    onClick={() => clearDoer()}
+                  >
+                    Удалить
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-link text-decoration-none"
+                    onClick={() => clearDoer()}
+                  >
+                    Отмена
+                  </button>
+                )}
+              </div>
             </div>
           ) : null}
         </div>

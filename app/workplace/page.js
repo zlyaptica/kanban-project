@@ -7,6 +7,7 @@ import { Action } from "@/utils/Enums";
 import Image from "next/image";
 import deleteIcon from "../../public/deleteIcon.svg";
 import editIcon from "../../public/editIcon.svg";
+import { navigateToHome } from "../actions";
 
 export default function MyBoards() {
   const [boards, setBoards] = useState("");
@@ -43,15 +44,19 @@ export default function MyBoards() {
       if (data.boards) {
         setBoards(data.boards);
       } else {
-        console.log("нет досок")
+        console.log("нет досок");
       }
     };
     let user;
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
-      getUserBoards(user._id);
+      if (!user) {
+        navigateToHome();
+      } else {
+        getUserBoards(user._id);
+      }
     }
-    }, []);
+  }, []);
   return (
     <div className={"m-2"}>
       <StateNameControl
