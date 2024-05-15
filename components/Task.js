@@ -10,6 +10,35 @@ const Task = (props) => {
   const taskStartDate = props.task.start_date ? props.task.start_date : null;
   const taskDeadline = props.task.deadline ? props.task.deadline : null;
 
+  const setIsDone = async (task_id) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+
+    if (user) {
+      const response = await fetch(`/api/tasks/${task_id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          is_completed: !props.task.is_completed,
+          field: "is_completed",
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setCurrentOpenTaskSidebarData(data.updatedTask);
+      }
+    }
+  };
+
   return (
     <div className={"d-flex align-items-start"}>
       <Image
@@ -18,6 +47,7 @@ const Task = (props) => {
         width={15}
         height={15}
         className="me-1"
+        onClick={() => setIsDone(props.task._id)}
       />
       <div>
         {props.task.doer ? (

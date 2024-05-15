@@ -181,7 +181,6 @@ const Status = (props) => {
   };
 
   const updateStatusName = async (name) => {
-    console.log("hello")
     let user;
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
@@ -203,7 +202,7 @@ const Status = (props) => {
         }
       );
       const data = await response.json();
-      console.log("lol")
+      console.log("lol");
       props.setStatuses(data.boardData);
       setStatus(data.status);
     }
@@ -277,7 +276,14 @@ const Status = (props) => {
         {status.tasks &&
           status.tasks.map((task, key) => (
             <div key={key} className={styles.task}>
-              <Task task={task} openTaskInfo={props.openTaskInfo} />
+              <Task
+                task={task}
+                openTaskInfo={props.openTaskInfo}
+                setStatuses={props.setStatuses}
+                setCurrentOpenTaskSidebarData={
+                  props.setCurrentOpenTaskSidebarData
+                }
+              />
             </div>
           ))}
       </div>

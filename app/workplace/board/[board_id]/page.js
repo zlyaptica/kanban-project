@@ -146,7 +146,6 @@ export default function Board({ params }) {
       setStatuses(data.statusTasks);
       setBoardData(data.board);
     }
-
     let user;
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
@@ -173,10 +172,8 @@ export default function Board({ params }) {
                     <input
                       placeholder="Введите название..."
                       value={editBoardNameInputValue}
-                      onChange={(e) =>
-                        setEditBoardNameInputValue(e.target.value)
-                      }
-                      onBlur={() => setEditBoardNameInputActive(false)}
+                      onChange={(e) => setEditBoardNameInputValue(e.target.value)}
+                      // onBlur={() => endEditBoardName()}
                     />
                   )}
                   <li className="nav-item">
@@ -188,10 +185,7 @@ export default function Board({ params }) {
                         Изменить название
                       </button>
                     ) : (
-                      <button
-                        className="nav-link"
-                        onClick={() => updateBoardName()}
-                      >
+                      <button className="nav-link" onClick={() => updateBoardName()}>
                         Сохранить
                       </button>
                     )}
@@ -229,6 +223,7 @@ export default function Board({ params }) {
                   openTaskInfo={openTaskInfo}
                   boardID={boardID}
                   setStatuses={setStatuses}
+                  setCurrentOpenTaskSidebarData={setCurrentOpenTaskSidebarData}
                 />
               </div>
             ))}

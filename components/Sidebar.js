@@ -3,12 +3,19 @@ import styles from "@/styles/Sidebar.module.css";
 import { useEffect, useState } from "react";
 import { Action } from "@/utils/Enums";
 import deleteIcon from "../public/deleteIcon.svg";
+import galochka from "../public/galochka.svg";
 import { StateNameControl } from "./StateNameControl";
 import { Subtask } from "./Subtask";
 
 const Sidebar = (props) => {
+  const [taskMailDoer, setTaskMailDoer] = useState("");
+  const [isTaskMailDoerInputActive, setIsTaskMailDoerInputActive] =
+    useState(false);
+
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [startDate, setStartDate] = useState("");
+
   const [isStartDateChosen, setIsStartDateChosen] = useState(false);
 
   const [createSubtaskInputActive, setCreateSubtaskInputActive] =
@@ -18,6 +25,35 @@ const Sidebar = (props) => {
   const setDoneClass = props.task.is_completed
     ? styles.setDoneButton + " " + "btn btn-success"
     : styles.setDoneButton + " " + "btn btn-outline-success";
+
+  const setIsDone = async (task_id, is_completed) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+
+    if (user) {
+      const response = await fetch(`/api/tasks/${task_id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          is_completed: is_completed,
+          field: "is_completed",
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      }
+    }
+  };
 
   const updateTaskName = async (name) => {
     let user;
@@ -34,13 +70,16 @@ const Sidebar = (props) => {
         body: JSON.stringify({
           author_id: user._id,
           name: name,
-          type: "name",
+          field: "name",
         }),
       });
       const data = await response.json();
-      props.setStatuses(data.boardData)
-      console.log(data.updatedTask)
-      props.setTask(data.updatedTask)
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      }
     }
   };
 
@@ -70,11 +109,223 @@ const Sidebar = (props) => {
     }
   };
 
-  const updateTaskDeadline = (taskID, e) => {};
+  const chooseDoer = async () => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    if (user) {
+      const response = await fetch(`/api/tasks/${props.task._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          doerEmail: taskMailDoer,
+          field: "doer",
+          type: "set",
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        setIsTaskMailDoerInputActive(false);
+        setTaskMailDoer(taskMailDoer);
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      }
+    }
+  };
 
-  const updatePriority = (taskID, priority) => {};
+  const clearDoer = async () => {
+    if (taskMailDoer) {
+      let user;
+      if (typeof window !== "undefined") {
+        user = JSON.parse(localStorage.getItem("user"));
+      }
+      if (user) {
+        const response = await fetch(`/api/tasks/${props.task._id}`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            author_id: user._id,
+            doerEmail: taskMailDoer,
+            field: "doer",
+            type: "unset",
+          }),
+        });
+        const data = await response.json();
+        if (response.status == 403) {
+          console.log(data.message);
+        } else if (response.status == 200) {
+          props.setStatuses(data.boardData);
+          props.setTask(data.updatedTask);
+          setTaskMailDoer("");
+        } else {
+          console.log("errorrr");
+        }
+      }
+    } else {
+      setTaskMailDoer("");
+      setIsTaskMailDoerInputActive(false);
+    }
+  };
 
-  const updateTaskDescription = (taskID) => {};
+  const updateTaskStartDate = async (startDate) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    if (user) {
+      const response = await fetch(`/api/tasks/${props.task._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          startDate: startDate != "" ? new Date(startDate) : "",
+          field: "startDate",
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      } else if (response.status == 400) {
+        console.log(data.message);
+      }
+    }
+  };
+
+  const deleteStartDate = async () => {
+    if (startDate) {
+      let user;
+      if (typeof window !== "undefined") {
+        user = JSON.parse(localStorage.getItem("user"));
+      }
+      if (user) {
+        const response = await fetch(`/api/tasks/${props.task._id}`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            author_id: user._id,
+            startDate: "",
+            field: "startDate",
+          }),
+        });
+        const data = await response.json();
+        if (response.status == 403) {
+          console.log(data.message);
+        } else if (response.status == 200) {
+          props.setStatuses(data.boardData);
+          props.setTask(data.updatedTask);
+        } else if (response.status == 400) {
+          console.log(data.message);
+        }
+      }
+    } else {
+      setIsStartDateChosen(false);
+    }
+  };
+
+  const updateTaskDeadline = async (deadline) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    if (user) {
+      const response = await fetch(`/api/tasks/${props.task._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          deadLineDate: deadline != "" ? new Date(deadline) : "",
+          field: "deadLineDate",
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      } else if (response.status == 400) {
+        console.log(data.message);
+      }
+    }
+  };
+
+  const updatePriority = async (priority) => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    if (user) {
+      const response = await fetch(`/api/tasks/${props.task._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          priority: priority,
+          field: "priority",
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      }
+    }
+  };
+
+  const updateTaskDescription = async () => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    if (user) {
+      const response = await fetch(`/api/tasks/${props.task._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          description: description,
+          field: "description",
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      }
+    }
+  };
 
   const cancelCreateSubtask = () => {
     setCreateSubtaskInputActive(false);
@@ -83,12 +334,24 @@ const Sidebar = (props) => {
 
   useEffect(() => {
     setDescription(props.task.description);
-
-    if (props.task.deadline) {
-      const taskDeadline = new Date(props.task.deadline);
+    if (props.task.deadLineDate) {
+      const taskDeadline = new Date(props.task.deadLineDate);
       setDeadline(taskDeadline.toISOString().split("T")[0]);
     } else {
       setDeadline("");
+    }
+
+    if (props.task.startDate) {
+      const taskStartDate = new Date(props.task.startDate);
+      setStartDate(taskStartDate.toISOString().split("T")[0]);
+    } else {
+      setStartDate("");
+    }
+
+    if (props.task.doer) {
+      setTaskMailDoer(props.task.doer.email);
+    } else {
+      setTaskMailDoer("");
     }
   }, [props.task]);
   return (
@@ -105,7 +368,7 @@ const Sidebar = (props) => {
             <button
               className={setDoneClass}
               onClick={() =>
-                props.setIsDone(props.task._id, !props.task.is_completed)
+                setIsDone(props.task._id, !props.task.is_completed)
               }
             >
               Выполнено
@@ -130,8 +393,48 @@ const Sidebar = (props) => {
             act="Изменить"
           />
         </div>
+        <div>
+          {props.task.doer && !isTaskMailDoerInputActive ? (
+            <div>
+              <h6 className={"m-0 me-1"}>Исполнитель</h6>
+              <p onClick={() => setIsTaskMailDoerInputActive(true)}>
+                {props.task.doer.name}
+              </p>
+            </div>
+          ) : null}
+          {!props.task.doer && !isTaskMailDoerInputActive ? (
+            <button
+              className="btn btn-link text-decoration-none"
+              onClick={() => setIsTaskMailDoerInputActive(true)}
+            >
+              Добавить исполнителя
+            </button>
+          ) : null}
+          {isTaskMailDoerInputActive ? (
+            <div className={"d-flex flex-row align-items-center"}>
+              <input
+                type="text"
+                name="taskMailDoer"
+                value={taskMailDoer}
+                onChange={(e) => setTaskMailDoer(e.target.value)}
+              />
+              <Image
+                src={galochka}
+                height={25}
+                width={25}
+                alt="Выбрать исполнителя"
+                className="p-1"
+                onClick={() => chooseDoer()}
+              />
+              <button
+                className={styles.deleteStartDateButton + " " + "btn-close"}
+                onClick={() => clearDoer()}
+              ></button>
+            </div>
+          ) : null}
+        </div>
         <div className={"d-flex flex-row"}>
-          {isStartDateChosen ? (
+          {isStartDateChosen || startDate ? (
             <div className="d-flex flex-column me-3">
               <div className="d-flex align-items-center">
                 <h6 className={"m-0 me-1"}>Дата начала</h6>
@@ -139,15 +442,15 @@ const Sidebar = (props) => {
                   className={
                     styles.deleteStartDateButton + " " + "btn-close me-2"
                   }
-                  onClick={() => setIsStartDateChosen(false)}
+                  onClick={() => deleteStartDate()}
                 ></button>
               </div>
               <input
                 className={styles.input}
                 type="date"
-                name="deadline"
-                value={deadline}
-                onChange={(e) => updateTaskDeadline(props.task._id, e)}
+                name="startdate"
+                value={startDate}
+                onChange={(e) => updateTaskStartDate(e.target.value)}
               />
             </div>
           ) : null}
@@ -158,10 +461,10 @@ const Sidebar = (props) => {
               type="date"
               name="deadline"
               value={deadline}
-              onChange={(e) => updateTaskDeadline(props.task._id, e)}
+              onChange={(e) => updateTaskDeadline(e.target.value)}
             />
           </div>
-          {!isStartDateChosen ? (
+          {!isStartDateChosen & !startDate ? (
             <button
               className="btn btn-link text-decoration-none"
               onClick={() => setIsStartDateChosen(true)}
@@ -176,7 +479,7 @@ const Sidebar = (props) => {
             className={styles.input}
             name="priority"
             value={props.task.priority}
-            onChange={(e) => updatePriority(props.task._id, e)}
+            onChange={(e) => updatePriority(e.target.value)}
           >
             <option id="0" value="0">
               ——
@@ -201,7 +504,7 @@ const Sidebar = (props) => {
             className={styles.description}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            onBlur={() => updateTaskDescription(props.task._id)}
+            onBlur={() => updateTaskDescription()}
           ></textarea>
         </div>
         <div className="d-flex flex-column">
