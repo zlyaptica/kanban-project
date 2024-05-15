@@ -14,24 +14,7 @@ export async function GetBoardData(board_id) {
     let tasks = await Task.find({ status: statuses[i]._id });
     let tasksWithDoerData = [];
     for (let i = 0; i < tasks.length; i++) {
-      let doerData;
-      if (tasks[i].doer) {
-        let doer = await User.findById(tasks[i].doer);
-        doerData = {
-          _id: doer._id,
-          name: doer.name,
-          email: doer.email,
-        };
-      }
-
-      let data = {
-        _id: tasks[i]._id,
-        name: tasks[i].name,
-        description: tasks[i].description,
-        status: tasks[i].status,
-        doer: doerData,
-        index: tasks[i].index,
-      };
+      const data = await GetTaskStruct(tasks[i]);
 
       tasksWithDoerData.push(data);
     }
@@ -45,34 +28,41 @@ export async function GetBoardData(board_id) {
       tasks: tasksWithDoerData,
     };
     statusTasks.push(data);
-
   }
   return statusTasks;
+}
+
+export async function GetTaskStruct(task) {
+  let doer = await User.findById(task.doer);
+  let doerData;
+  if (doer) {
+    doerData = {
+      _id: doer._id,
+      name: doer.name,
+      email: doer.email,
+    };
+  }
+
+  let data = {
+    _id: task._id,
+    name: task.name,
+    description: task.description,
+    status: task.status,
+    doer: doerData,
+    index: task.index,
+    is_completed: task.is_completed,
+    priority: task.priority,
+    deadLineDate: task.deadLineDate,
+    startDate: task.startDate,
+  };
+  return data;
 }
 
 export async function GetStatusData(status) {
   let tasks = await Task.find({ status: status._id });
   let tasksWithDoerData = [];
   for (let i = 0; i < tasks.length; i++) {
-    let doerData;
-    if (tasks[i].doer) {
-      let doer = await User.findById(tasks[i].doer);
-      doerData = {
-        _id: doer._id,
-        name: doer.name,
-        email: doer.email,
-      };
-    }
-
-    let data = {
-      _id: tasks[i]._id,
-      name: tasks[i].name,
-      description: tasks[i].description,
-      board_id: tasks[i].board_id,
-      status: tasks[i].status,
-      doer: doerData,
-      index: tasks[i].index,
-    };
+    const data = await GetTaskStruct(tasks[i]);
 
     tasksWithDoerData.push(data);
   }
@@ -85,5 +75,5 @@ export async function GetStatusData(status) {
     index: status.index,
     tasks: tasksWithDoerData,
   };
-  return data
+  return data;
 }
