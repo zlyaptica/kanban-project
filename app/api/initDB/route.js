@@ -63,18 +63,22 @@ export async function GET(request) {
   let task = new Task();
   task.board_id = kanban._id;
   task.name = "Сделать канбан";
+  task.priority = 1;
   task.description = "Надо сделать канбан";
   task.status = statuses[0]._id;
   task.doer = users[1]._id;
   task.index = 0;
+  task.is_completed = false;
   await task.save();
 
   task = new Task();
   task.board_id = kanban._id;
   task.name = "Сделать API";
+  task.priority = 0;
   task.description = "Надо сделать API";
   task.status = statuses[1]._id;
   task.doer = users[0]._id;
+  task.is_completed = true;
   task.index = 0;
   await task.save();
 
