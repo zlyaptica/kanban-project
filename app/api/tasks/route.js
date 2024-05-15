@@ -24,6 +24,7 @@ export async function POST(request) {
     let task = new Task;
     task.board = requestBody.board;
     task.name = requestBody.name;
+    task.priority = 0;
     task.description = requestBody.description;
     task.status = requestBody.status;
     task.doer = requestBody.user;
