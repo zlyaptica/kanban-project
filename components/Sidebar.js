@@ -8,6 +8,7 @@ import { StateNameControl } from "./StateNameControl";
 import { Subtask } from "./Subtask";
 
 const Sidebar = (props) => {
+  const [user, setUser] = useState("");
   const [taskMailDoer, setTaskMailDoer] = useState("");
   const [isTaskMailDoerInputActive, setIsTaskMailDoerInputActive] =
     useState(false);
@@ -329,12 +330,91 @@ const Sidebar = (props) => {
     }
   };
 
+  const createSubtask = async (user, taskID, taskName) => {
+    if (user) {
+      const response = await fetch(`/api/subtasks`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          task_id: taskID,
+          name: taskName,
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 201) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      }
+    }
+  };
+
+  const checkSubtask = async (subtask_id, done) => {
+    if (user) {
+      const response = await fetch(`/api/subtasks/${subtask_id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          task_id: props.task._id,
+          done: done,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      }
+    }
+  };
+
   const cancelCreateSubtask = () => {
     setCreateSubtaskInputActive(false);
     setCreateSubtaskInputValue("");
   };
 
+  const deleteSubtask = async (subtask_id) => {
+    if (user) {
+      const response = await fetch(`/api/subtasks/${subtask_id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          task_id: props.task._id,
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      }
+    }
+  };
+
   useEffect(() => {
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    if (user) setUser(user);
     setDescription(props.task.description);
     if (props.task.deadLineDate) {
       const taskDeadline = new Date(props.task.deadLineDate);
@@ -413,7 +493,10 @@ const Sidebar = (props) => {
             </button>
           ) : null}
           {isTaskMailDoerInputActive ? (
-            <div className={"d-flex flex-column "} onBlur={() => setIsTaskMailDoerInputActive(false)}>
+            <div
+              className={"d-flex flex-column "}
+              onBlur={() => setIsTaskMailDoerInputActive(false)}
+            >
               <input
                 type="email"
                 name="taskMailDoer"
@@ -525,15 +608,26 @@ const Sidebar = (props) => {
           <h6 className={"font-weight-bold m-0 mb-1"}>Подзадачи</h6>
           <div className={styles.createSubtask}>
             {createSubtaskInputActive ? (
-              <div className={"d-flex align-items-center"}>
+              <div className={"d-flex flex-column"}>
                 <input
                   type="text"
+                  autoFocus
                   placeholder="Введите название..."
                   value={createSubtaskInputValue}
                   onChange={(e) => setCreateSubtaskInputValue(e.target.value)}
                 />
                 <div className="input-group-append">
-                  <button className="btn" type="button">
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={() =>
+                      createSubtask(
+                        user,
+                        props.task._id,
+                        createSubtaskInputValue
+                      )
+                    }
+                  >
                     Создать
                   </button>
                   <button
@@ -557,7 +651,11 @@ const Sidebar = (props) => {
           {props.task.subtasks &&
             props.task.subtasks.map((subtask, key) => (
               <div key={key}>
-                <Subtask subtask={subtask} />
+                <Subtask
+                  subtask={subtask}
+                  deleteSubtask={deleteSubtask}
+                  checkSubtask={checkSubtask}
+                />
               </div>
             ))}
         </div>

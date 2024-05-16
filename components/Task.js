@@ -76,7 +76,7 @@ const Task = (props) => {
             <p className={styles.subtaskHeader}>
               {
                 (props.task.subtasks?.filter(
-                  (subtask) => subtask.is_completed === true
+                  (subtask) => subtask.done === true
                 )).length
               }
               /{props.task.subtasks.length}
