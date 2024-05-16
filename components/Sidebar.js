@@ -415,7 +415,7 @@ const Sidebar = (props) => {
           {isTaskMailDoerInputActive ? (
             <div className={"d-flex flex-column "} onBlur={() => setIsTaskMailDoerInputActive(false)}>
               <input
-                type="text"
+                type="email"
                 name="taskMailDoer"
                 value={taskMailDoer}
                 autoFocus

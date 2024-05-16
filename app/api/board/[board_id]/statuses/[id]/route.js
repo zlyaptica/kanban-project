@@ -40,22 +40,15 @@ export async function POST(request, { params }) {
   const data = await request.json();
 
   if (data.field == "type") {
-    await Status.updateOne({_id: params.id}, {type: data.type})
-    // await Status.findByIdAndUpdate(params.id, {
-    //   type: data.type,
-    // });
+    await Status.updateOne({ _id: params.id }, { type: data.type });
   }
 
   if (data.field == "name") {
-    console.log("tyta")
-    await Status.updateOne({_id: params.id}, {name: data.name})
-    // await Status.findByIdAndUpdate(params.id, {
-    //   name: data.name,
-    // });
+    await Status.updateOne({ _id: params.id }, { name: data.name });
   }
 
-  let updatedStatus = await Status.findById(params.id); 
-  let statusData = await GetStatusData(updatedStatus)
+  let updatedStatus = await Status.findById(params.id);
+  let statusData = await GetStatusData(updatedStatus);
 
   let boardData = await GetBoardData(params.board_id);
 

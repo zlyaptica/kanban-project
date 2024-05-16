@@ -56,7 +56,7 @@ export default function MyBoards() {
         getUserBoards(user._id);
       }
     }
-  }, []);
+  }, [boards]);
   return (
     <div className={"m-2"}>
       <StateNameControl

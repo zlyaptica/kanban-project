@@ -14,11 +14,13 @@ export async function DELETE(request, { params }) {
   const board = await Board.findOne({ _id: board_id });
 
   if (board.author == data.author_id) {
-    await Access.deleteMany({ board_id: board_id });
-    await Status.deleteMany({ board_id: board_id });
-    await Task.deleteMany({ board_id: board_id });
-    await Subtask.deleteMany({ board_id: board_id });
+    if (!data.empty_board) {
+      await Status.deleteMany({ board_id: board_id });
+      await Task.deleteMany({ board_id: board_id });
+      await Subtask.deleteMany({ board_id: board_id });
+    }
     await Board.findByIdAndDelete(board_id);
+    await Access.deleteMany({ board_id: board_id });
 
     return NextResponse.json(
       {

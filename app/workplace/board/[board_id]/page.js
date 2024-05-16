@@ -7,12 +7,20 @@ import { useEffect, useState } from "react";
 import { StateNameControl } from "@/components/StateNameControl";
 import { Sidebar } from "@/components/Sidebar";
 import { navigateToWorkplace } from "@/app/actions";
+import { DeleteNotEmptyBoard } from "@/components/DeleteNotEmptyBoardForm";
+import { Popup } from "@/components/Popup";
 
 export default function Board({ params }) {
   const boardID = params.board_id;
+
   const [statuses, setStatuses] = useState([]);
   const [boardData, setBoardData] = useState("");
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const [removableData, setRemovableData] = useState("")
+  const [deleteNotEmptyObjectPopupActive, setDeleteNotEmptyObjectPopupActive] = useState(false)
+
   const [editBoardNameInputValue, setEditBoardNameInputValue] = useState("");
   const [editBoardNameInputActive, setEditBoardNameInputActive] =
     useState(false);
@@ -87,22 +95,30 @@ export default function Board({ params }) {
       user = JSON.parse(localStorage.getItem("user"));
     }
 
-    const response = await fetch(`/api/board/${boardID}`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify({
-        author_id: user._id,
-      }),
-    });
-    const data = await response.json();
-    console.log(data);
-    if (response.status == 403) {
-      console.log(data.message);
-    } else if (response.status == 200) {
-      navigateToWorkplace();
+    if (user) {
+      if (!statuses) {
+        const response = await fetch(`/api/board/${boardID}`, {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            author_id: user._id,
+            empty_board: true
+          }),
+        });
+        const data = await response.json();
+        console.log(data);
+        if (response.status == 403) {
+          console.log(data.message);
+        } else if (response.status == 200) {
+          navigateToWorkplace();
+        }
+      } else {
+        setRemovableData(statuses)
+        setDeleteNotEmptyObjectPopupActive(true)
+      }
     }
   };
 
@@ -170,10 +186,12 @@ export default function Board({ params }) {
                     </li>
                   ) : (
                     <input
+                    type="text"
                       placeholder="Введите название..."
                       value={editBoardNameInputValue}
-                      onChange={(e) => setEditBoardNameInputValue(e.target.value)}
-                      // onBlur={() => endEditBoardName()}
+                      onChange={(e) =>
+                        setEditBoardNameInputValue(e.target.value)
+                      }
                     />
                   )}
                   <li className="nav-item">
@@ -185,7 +203,10 @@ export default function Board({ params }) {
                         Изменить название
                       </button>
                     ) : (
-                      <button className="nav-link" onClick={() => updateBoardName()}>
+                      <button
+                        className="nav-link"
+                        onClick={() => updateBoardName()}
+                      >
                         Сохранить
                       </button>
                     )}
@@ -247,6 +268,9 @@ export default function Board({ params }) {
           />
         ) : null}
       </div>
+      <Popup active={deleteNotEmptyObjectPopupActive} setActive={setDeleteNotEmptyObjectPopupActive}>
+        <DeleteNotEmptyBoard data={removableData} setActive={setDeleteNotEmptyObjectPopupActive} type="board" boardID={boardID}/>
+      </Popup>
     </div>
   );
 }
