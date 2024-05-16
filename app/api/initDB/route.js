@@ -86,24 +86,28 @@ export async function GET(request) {
 
   let subtask = new Subtask();
   subtask.task = tasks[0]._id;
+  subtask.board_id = tasks[0].board_id
   subtask.name = "Сделать канбан";
   subtask.done = false;
   await subtask.save();
 
   subtask = new Subtask();
   subtask.task = tasks[0]._id;
+  subtask.board_id = tasks[0].board_id
   subtask.name = "Не сломать канбан";
   subtask.done = true;
   await subtask.save();
 
   subtask = new Subtask();
   subtask.task = tasks[1]._id;
+  subtask.board_id = tasks[1].board_id
   subtask.name = "Сделать API";
   subtask.done = true;
   await subtask.save();
 
   subtask = new Subtask();
   subtask.task = tasks[1]._id;
+  subtask.board_id = tasks[1].board_id
   subtask.name = "Не сломать API";
   subtask.done = false;
   await subtask.save();
