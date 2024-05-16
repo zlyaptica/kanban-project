@@ -1,4 +1,4 @@
-import { GetBoardData, GetStatusData, GetTaskStruct } from "@/utils/utility_methods";
+import { GetBoardData, GetStatusData, GetTaskStruct, InRange } from "@/utils/utility_methods";
 import dbConnect from "@/lib/dbConnect";
 import Task from "@/models/Task";
 import { NextResponse } from "next/server";
@@ -67,6 +67,35 @@ export async function POST(request, { params }) {
       await Task.findByIdAndUpdate(task_id, {
         priority: data.priority,
       });
+    }
+    if (data.field == "index") {
+      let originalIndex = task.index
+      let setIndex = data.index
+
+      await Task.findByIdAndUpdate(task_id, {
+        index: data.index,
+      });
+
+      let tasks = Task.find({ board_id: task.board_id, status: task.status })
+
+      for (let index = 0; index < tasks.length; index++) {
+        const updatedTask = tasks[index];
+
+        if (InRange(updatedTask.index, originalIndex, setIndex)){
+          let movedIndex
+
+          if (setIndex > originalIndex){
+            movedIndex = updatedTask.index - 1
+          }
+          else{
+            movedIndex = updatedTask.index + 1
+          }
+
+          await Task.findByIdAndUpdate(updatedTask._id, {
+            index: movedIndex
+          })
+        }
+      }
     }
 
     if (data.field == "doer") {
