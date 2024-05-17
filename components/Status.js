@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 
 const Status = (props) => {
   const [status, setStatus] = useState("");
-  //   const [currentState, setCurrentState] = useState(null)
-  //   const [currentTask, setCurrentTask] = useState(null)
+    // const [currentStatus, setCurrentStatus] = useState(null)
+    // const [currentTask, setCurrentTask] = useState(null)
   //   const [isDraggedTask, setIsDraggedTask] = useState(false)
 
   //   const deleteState = async (state) => {
@@ -275,7 +275,14 @@ const Status = (props) => {
         </div>
         {status.tasks &&
           status.tasks.map((task, key) => (
-            <div key={key} className={styles.task}>
+            <div key={key} className={styles.task}
+            draggable={true}
+            onDragOver={(e) => props.dragOverTaskHandler(e)}
+            onDragLeave={(e) => props.dragLeaveTaskHandler(e)}
+            onDragStart={(e) => props.dragStartTaskHandler(e, status, task)}
+            onDragEnd={(e) => props.dragEndTaskHandler(e)}
+            onDrop={(e) => props.dropTaskHandler(e, status, task)}
+            >
               <Task
                 task={task}
                 openTaskInfo={props.openTaskInfo}

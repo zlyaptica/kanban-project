@@ -14,12 +14,17 @@ export default function Board({ params }) {
   const boardID = params.board_id;
 
   const [statuses, setStatuses] = useState([]);
-  const [boardData, setBoardData] = useState("");
+  const [boardData, setBoardData] = useState(""); // данные о сущности Доска
+
+  const [currentStatus, setCurrentStatus] = useState(null);
+  const [currentTask, setCurrentTask] = useState(null);
+  const [isDraggedTask, setIsDraggedTask] = useState(false);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const [removableData, setRemovableData] = useState("")
-  const [deleteNotEmptyObjectPopupActive, setDeleteNotEmptyObjectPopupActive] = useState(false)
+  const [removableData, setRemovableData] = useState("");
+  const [deleteNotEmptyObjectPopupActive, setDeleteNotEmptyObjectPopupActive] =
+    useState(false);
 
   const [editBoardNameInputValue, setEditBoardNameInputValue] = useState("");
   const [editBoardNameInputActive, setEditBoardNameInputActive] =
@@ -83,7 +88,7 @@ export default function Board({ params }) {
       console.log(data.message);
     } else if (response.status == 200) {
       console.log(data);
-      setBoardData(await data.updatedBoard);
+      setBoardData(data.updatedBoard);
     }
     setEditBoardNameInputActive(false);
     setEditBoardNameInputValue("");
@@ -105,7 +110,7 @@ export default function Board({ params }) {
           },
           body: JSON.stringify({
             author_id: user._id,
-            empty_board: true
+            empty_board: true,
           }),
         });
         const data = await response.json();
@@ -116,8 +121,8 @@ export default function Board({ params }) {
           navigateToWorkplace();
         }
       } else {
-        setRemovableData(statuses)
-        setDeleteNotEmptyObjectPopupActive(true)
+        setRemovableData(statuses);
+        setDeleteNotEmptyObjectPopupActive(true);
       }
     }
   };
@@ -139,6 +144,69 @@ export default function Board({ params }) {
   const endEditBoardName = () => {
     setEditBoardNameInputActive(false);
     setEditBoardNameInputValue("");
+  };
+
+  const dragOverTaskHandler = async (e) => {
+    e.preventDefault();
+    if (e.target.className == styles.task) {
+      e.target.style.boxShadow = "0 2px 3px gray";
+    }
+  };
+
+  const dragLeaveTaskHandler = async (e) => {
+    e.target.style.boxShadow = "none";
+  };
+
+  const dragStartTaskHandler = async (e, status, task) => {
+    setIsDraggedTask(true);
+    setCurrentStatus(status);
+    setCurrentTask(task);
+  };
+
+  const dragEndTaskHandler = async (e) => {
+    setIsDraggedTask(false);
+    e.target.style.boxShadow = "none";
+  };
+
+  const dropTaskHandler = async (e, status, task) => {
+    e.preventDefault();
+    console.log("cur status", currentStatus)
+    console.log("news tatus", status)
+    console.log("cur task", currentTask)
+    console.log("new task", task)
+    let user;
+    if (typeof window !== "undefined") {
+      user = JSON.parse(localStorage.getItem("user"));
+    }
+    if (
+      !(status.index == currentStatus.index && task.index == currentTask.index)
+    ) {
+      const response = await fetch(`/api/tasks/${task._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          // currentStatusID: currentStatus._id,
+          newStatusID: status._id,
+          currentTaskIndex: currentTask.index,
+          setIndex: task.index,
+          field: "index",
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        setStatuses(data.updatedBoard);
+      }
+    }
+    setCurrentStatus(null);
+    setCurrentTask(null);
+    setIsDraggedTask(false);
   };
 
   useEffect(() => {
@@ -186,7 +254,7 @@ export default function Board({ params }) {
                     </li>
                   ) : (
                     <input
-                    type="text"
+                      type="text"
                       placeholder="Введите название..."
                       value={editBoardNameInputValue}
                       onChange={(e) =>
@@ -245,6 +313,11 @@ export default function Board({ params }) {
                   boardID={boardID}
                   setStatuses={setStatuses}
                   setCurrentOpenTaskSidebarData={setCurrentOpenTaskSidebarData}
+                  dragOverTaskHandler={dragOverTaskHandler}
+                  dragLeaveTaskHandler={dragLeaveTaskHandler}
+                  dragStartTaskHandler={dragStartTaskHandler}
+                  dragEndTaskHandler={dragEndTaskHandler}
+                  dropTaskHandler={dropTaskHandler}
                 />
               </div>
             ))}
@@ -268,8 +341,16 @@ export default function Board({ params }) {
           />
         ) : null}
       </div>
-      <Popup active={deleteNotEmptyObjectPopupActive} setActive={setDeleteNotEmptyObjectPopupActive}>
-        <DeleteNotEmptyBoard data={removableData} setActive={setDeleteNotEmptyObjectPopupActive} type="board" boardID={boardID}/>
+      <Popup
+        active={deleteNotEmptyObjectPopupActive}
+        setActive={setDeleteNotEmptyObjectPopupActive}
+      >
+        <DeleteNotEmptyBoard
+          data={removableData}
+          setActive={setDeleteNotEmptyObjectPopupActive}
+          type="board"
+          boardID={boardID}
+        />
       </Popup>
     </div>
   );
