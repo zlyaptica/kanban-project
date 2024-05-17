@@ -69,11 +69,11 @@ export async function POST(request, { params }) {
       });
     }
     if (data.field == "index") {
-      let originalIndex = task.index
-      let setIndex = data.index
+      let originalIndex = task.currentTaskIndex
+      let setIndex = data.setIndex
 
       await Task.findByIdAndUpdate(task_id, {
-        index: data.index,
+        index: setIndex,
       });
 
       let tasks = Task.find({ board_id: task.board_id, status: task.status })
