@@ -69,31 +69,99 @@ export async function POST(request, { params }) {
       });
     }
     if (data.field == "index") {
-      let originalIndex = task.currentTaskIndex
-      let setIndex = data.setIndex
+      let currentStatusID = data.currentStatusID;
+      let newStatusID = data.newStatusID;
+      let originalIndex = data.currentTaskIndex;
+      let setIndex = data.setIndex;
 
-      await Task.findByIdAndUpdate(task_id, {
-        index: setIndex,
-      });
+      let startIndex, endIndex;
 
-      let tasks = Task.find({ board_id: task.board_id, status: task.status })
-
-      for (let index = 0; index < tasks.length; index++) {
-        const updatedTask = tasks[index];
-
-        if (InRange(updatedTask.index, originalIndex, setIndex)){
-          let movedIndex
-
-          if (setIndex > originalIndex){
-            movedIndex = updatedTask.index - 1
+      if (currentStatusID == newStatusID) {
+        // если мы перетаскиваем в пределах одной доски
+        if (setIndex > originalIndex) {
+          // если перетаскиваем ниже своего положения
+          startIndex = originalIndex + 1;
+          endIndex = setIndex;
+          for (let i = startIndex; i <= endIndex; i++) {
+            await Task.findOneAndUpdate(
+              { status: currentStatusID, index: i },
+              { index: i - 1 }
+            );
           }
-          else{
-            movedIndex = updatedTask.index + 1
+        } else {
+          // если перетаскиваем вверх
+          startIndex = originalIndex - 1;
+          endIndex = setIndex;
+          for (let i = startIndex; i >= endIndex; i--) {
+            await Task.findOneAndUpdate(
+              { status: currentStatusID, index: i },
+              { index: i + 1 }
+            );
           }
+        }
+        await Task.findByIdAndUpdate(task_id, { index: setIndex });
+      } else {
+        // если доски разные
 
-          await Task.findByIdAndUpdate(updatedTask._id, {
-            index: movedIndex
+        const newStatusTasks = await Task.find({ status: newStatusID });
+        if (newStatusTasks.length != 0) {
+          // если у новой доски есть задачи
+
+          // меняем индексы у новой доски
+          startIndex = newStatusTasks.length - 1;
+          endIndex = setIndex;
+          if (startIndex >= endIndex) {
+            for (let i = startIndex; i >= endIndex; i--) {
+              await Task.findOneAndUpdate(
+                { status: newStatusID, index: i },
+                { index: i + 1 }
+              );
+            }
+          }
+          await Task.findByIdAndUpdate(task_id, {
+            status: newStatusID,
+            index: setIndex,
+          });
+
+          // меняем индексы у старого статуса
+          let lastTaskInOldStatus = await Task.findOne({
+            status: currentStatusID,
           })
+            .sort({ index: -1 })
+            .limit(1);
+          if (lastTaskInOldStatus.index > originalIndex) {
+            // если истино, значит таска была не последней
+            startIndex = originalIndex + 1;
+            endIndex = lastTaskInOldStatus.index;
+            for (let i = startIndex; i <= endIndex; i++) {
+              await Task.findOneAndUpdate(
+                { status: currentStatusID, index: i },
+                { index: i - 1 }
+              );
+            }
+          }
+        } else {
+          // если у новой доски нет задач
+          await Task.findByIdAndUpdate(task_id, {
+            index: 0,
+            status: newStatusID,
+          });
+          let lastIndexTask = await Task.findOne({ status: newStatusID })
+            .sort({ index: -1 })
+            .limit(1);
+          if (lastIndexTask.length != 0) {
+            if (originalIndex < lastIndexTask.length) {
+              // если у перетаскиваемой таски индекс был max, значит она последняя
+              startIndex = originalIndex + 1;
+              endIndex = lastIndexTask.index;
+              for (let i = startIndex; i >= endIndex; i--) {
+                await Task.findOneAndUpdate(
+                  { status: currentStatusID, index: i },
+                  { index: i - 1 }
+                );
+              }
+            }
+          }
         }
       }
     }
