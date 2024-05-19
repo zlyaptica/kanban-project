@@ -91,6 +91,7 @@ const Sidebar = (props) => {
     }
 
     if (user) {
+      console.log("userif", user._id);
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "DELETE",
         headers: {
@@ -116,7 +117,11 @@ const Sidebar = (props) => {
       user = JSON.parse(localStorage.getItem("user"));
     }
     if (user) {
-      if (taskMailDoer !== props.task.doer.email) {
+      let doer
+      if (props.task.doer) {
+        doer = props.task.doer.email;
+      }
+      if (taskMailDoer !== doer) {
         const response = await fetch(`/api/tasks/${props.task._id}`, {
           method: "POST",
           headers: {
@@ -131,6 +136,7 @@ const Sidebar = (props) => {
           }),
         });
         const data = await response.json();
+        console.log(data);
         if (response.status == 403) {
           console.log(data.message);
         } else if (response.status == 200) {
@@ -144,6 +150,7 @@ const Sidebar = (props) => {
   };
 
   const clearDoer = async () => {
+    console.log(" a tut");
     if (taskMailDoer) {
       let user;
       if (typeof window !== "undefined") {
@@ -345,12 +352,13 @@ const Sidebar = (props) => {
         }),
       });
       const data = await response.json();
-      console.log(data);
       if (response.status == 403) {
         console.log(data.message);
       } else if (response.status == 201) {
         props.setStatuses(data.boardData);
         props.setTask(data.updatedTask);
+        setCreateSubtaskInputValue("");
+        setCreateSubtaskInputActive(false);
       }
     }
   };
@@ -435,6 +443,7 @@ const Sidebar = (props) => {
     } else {
       setTaskMailDoer("");
     }
+    console.log(props.task);
   }, [props.task]);
   return (
     <div className={styles.sidebar}>
@@ -493,10 +502,7 @@ const Sidebar = (props) => {
             </button>
           ) : null}
           {isTaskMailDoerInputActive ? (
-            <div
-              className={"d-flex flex-column "}
-              onBlur={() => setIsTaskMailDoerInputActive(false)}
-            >
+            <div className={"d-flex flex-column "}>
               <input
                 type="email"
                 name="taskMailDoer"

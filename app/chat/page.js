@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
-import styles from "@/styles/Сhat.module.css";
+import styles from "@/styles/Chat.module.css"
 
 const socket = io();
 function getLocalTime(date) {

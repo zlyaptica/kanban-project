@@ -170,10 +170,6 @@ export default function Board({ params }) {
 
   const dropTaskHandler = async (e, status, task) => {
     e.preventDefault();
-    console.log("cur status", currentStatus)
-    console.log("news tatus", status)
-    console.log("cur task", currentTask)
-    console.log("new task", task)
     let user;
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
@@ -181,7 +177,7 @@ export default function Board({ params }) {
     if (
       !(status.index == currentStatus.index && task.index == currentTask.index)
     ) {
-      const response = await fetch(`/api/tasks/${task._id}`, {
+      const response = await fetch(`/api/tasks/${currentTask._id}`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -189,7 +185,7 @@ export default function Board({ params }) {
         },
         body: JSON.stringify({
           author_id: user._id,
-          // currentStatusID: currentStatus._id,
+          currentStatusID: currentStatus._id,
           newStatusID: status._id,
           currentTaskIndex: currentTask.index,
           setIndex: task.index,
@@ -201,7 +197,7 @@ export default function Board({ params }) {
       if (response.status == 403) {
         console.log(data.message);
       } else if (response.status == 200) {
-        setStatuses(data.updatedBoard);
+        setStatuses(data.boardData);
       }
     }
     setCurrentStatus(null);
