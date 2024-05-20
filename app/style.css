@@ -25,6 +25,37 @@ input::placeholder {
     border: solid;
 }
 
+/* start Header.js */
+
+.dropdownMenu {
+    position: absolute;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 1px 10px;
+    background-color: white;
+    right: 10px;
+    z-index: 999;
+}
+
+.dropdownItem {
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 1px;
+    padding: 1px;
+    text-align: left;
+    background-color: transparent;
+    border: none;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.dropdownItem:hover {
+    background-color: rgb(224, 224, 224);
+}
+
+/* end Header.js */
+
 .main {
     display: flex;
     justify-content: space-between;
@@ -54,3 +85,5 @@ input::placeholder {
 }
 
 /* end app/workplace/page.js */
+
+

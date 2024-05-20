@@ -140,6 +140,7 @@ export default function Board({ params }) {
   const dragLeaveStatusHandler = (e) => {};
 
   const dragStartStatusHandler = (e, status) => {
+
     setCurrentStatus(status);
   };
 

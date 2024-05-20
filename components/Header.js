@@ -1,21 +1,19 @@
 import Image from "next/image";
 import logo from "../public/kanbanlogo.png";
-import profile from "../public/profile.svg";
 import Link from "next/link";
-import { useEffect } from "react";
 import { navigateToHome } from "@/app/actions";
+import { ProfileMenu } from "./ProfileMenu";
 
 export default async function Header() {
 
   const updateDBData = async () => {
-    const response = await fetch(`/api/initDB`)
-    const data = await response.json()
-    console.log(data.message)
-    navigateToHome()
-    localStorage.removeItem("isAuthenticatedUser")
-    localStorage.removeItem("user")
-
-  }
+    const response = await fetch(`/api/initDB`);
+    const data = await response.json();
+    console.log(data.message);
+    localStorage.removeItem("isAuthenticatedUser");
+    localStorage.removeItem("user");
+    navigateToHome();
+  };
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -56,7 +54,8 @@ export default async function Header() {
               </button>
             </li>
           </ul>
-          <Image alt="profile" src={profile} width={40} height={40} />
+          
+        <ProfileMenu/>
         </div>
       </div>
     </nav>

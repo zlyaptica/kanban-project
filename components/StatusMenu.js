@@ -16,7 +16,7 @@ const StatusMenu = (props) => {
   }, [props.status])
 
   return (
-    <div className={"dropdown align-middle"}>
+    <div className={"dropdown align-middle"} >
       <button
         className="btn"
         type="button"
