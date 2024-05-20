@@ -92,6 +92,7 @@ const Sidebar = (props) => {
         console.log(data.message);
       } else if (response.status == 200) {
         props.setStatuses(data.boardData);
+        props.setIsSidebarOpen(false)
       }
     }
   };

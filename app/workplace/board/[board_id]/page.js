@@ -175,17 +175,33 @@ export default function Board({ params }) {
         setIsDraggedTask(false);
       }
     } else {
-      if (status.index != currentStatus.index) {
-        const body = {
-          newID: status._id, // идентификатор доски, вместо которой встанет перетаскивыемый элемент
-          currentIndex: currentStatus.index,
-          newIndex: status.index,
-        };
-        props.setStates(await UpdateStateIndex(currentStatus._id, body));
+      if (user) {
+        if (status.index != currentStatus.index) {
+          const response = await fetch(`/api/board/${currentStatus._id}`, {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({
+              author_id: user._id,
+              newStatusID: status._id,
+              currentStatusIndex: currentStatus.index,
+              setIndex: status.index,
+              field: "index",
+            }),
+          });
+          const data = await response.json();
+          if (response.status == 403) {
+            console.log(data.message);
+          } else if (response.status == 200) {
+            setStatuses(data.boardData);
+          }
+          setCurrentStatus(null);
+          setCurrentTask(null);
+        }
       }
     }
-
-    setCurrentStatus(null);
   };
 
   const dragOverTaskHandler = async (e) => {

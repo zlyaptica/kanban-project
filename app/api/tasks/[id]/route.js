@@ -1,4 +1,9 @@
-import { GetBoardData, GetStatusData, GetTaskStruct, InRange } from "@/utils/utility_methods";
+import {
+  GetBoardData,
+  GetStatusData,
+  GetTaskStruct,
+  InRange,
+} from "@/utils/utility_methods";
 import dbConnect from "@/lib/dbConnect";
 import Task from "@/models/Task";
 import { NextResponse } from "next/server";
@@ -107,7 +112,7 @@ export async function POST(request, { params }) {
         if (newStatusTasks.length != 0) {
           // если у новой доски есть задачи
 
-          // меняем индексы у новой доски
+          // меняем индексы у нового статуса
           startIndex = newStatusTasks.length - 1;
           endIndex = setIndex;
           if (startIndex >= endIndex) {
@@ -129,15 +134,17 @@ export async function POST(request, { params }) {
           })
             .sort({ index: -1 })
             .limit(1);
-          if (lastTaskInOldStatus.index > originalIndex) {
-            // если истино, значит таска была не последней
-            startIndex = originalIndex + 1;
-            endIndex = lastTaskInOldStatus.index;
-            for (let i = startIndex; i <= endIndex; i++) {
-              await Task.findOneAndUpdate(
-                { status: currentStatusID, index: i },
-                { index: i - 1 }
-              );
+          if (lastTaskInOldStatus) {
+            if (lastTaskInOldStatus.index > originalIndex) {
+              // если истино, значит таска была не последней
+              startIndex = originalIndex + 1;
+              endIndex = lastTaskInOldStatus.index;
+              for (let i = startIndex; i <= endIndex; i++) {
+                await Task.findOneAndUpdate(
+                  { status: currentStatusID, index: i },
+                  { index: i - 1 }
+                );
+              }
             }
           }
         } else {
@@ -146,15 +153,15 @@ export async function POST(request, { params }) {
             index: 0,
             status: newStatusID,
           });
-          let lastIndexTask = await Task.findOne({ status: newStatusID })
+          let lastIndexTask = await Task.findOne({ status: currentStatusID })
             .sort({ index: -1 })
             .limit(1);
-          if (lastIndexTask.length != 0) {
-            if (originalIndex < lastIndexTask.length) {
+          if (lastIndexTask) {
+            if (originalIndex < lastIndexTask.index) {
               // если у перетаскиваемой таски индекс был max, значит она последняя
               startIndex = originalIndex + 1;
               endIndex = lastIndexTask.index;
-              for (let i = startIndex; i >= endIndex; i--) {
+              for (let i = startIndex; i <= endIndex; i++) {
                 await Task.findOneAndUpdate(
                   { status: currentStatusID, index: i },
                   { index: i - 1 }
@@ -254,8 +261,8 @@ export async function POST(request, { params }) {
   }
 
   boardData = await GetBoardData(task.board_id);
-  let taskData = await Task.findOne({ _id: task_id })
-  updatedTask = await GetTaskStruct(taskData)
+  let taskData = await Task.findOne({ _id: task_id });
+  updatedTask = await GetTaskStruct(taskData);
 
   return NextResponse.json(
     {
