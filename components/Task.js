@@ -6,9 +6,12 @@ import Image from "next/image";
 import { TaskStickers } from "./TaskStickers";
 
 const Task = (props) => {
-  const taskPriority = props.task.priority ? props.task.priority : null;
-  const taskStartDate = props.task.start_date ? props.task.start_date : null;
-  const taskDeadline = props.task.deadline ? props.task.deadline : null;
+  let taskPriority = props.task.priority ? props.task.priority : null;
+  let taskStartDate = props.task.startDate ? props.task.startDate : null;
+  let taskDeadLine = props.task.deadLineDate ? props.task.deadLineDate : null;
+
+  // if (props.task.startDate) new Date()
+  // if (props.task.deadLineDate) new Date
 
   const setIsDone = async (task_id) => {
     let user;
@@ -62,7 +65,7 @@ const Task = (props) => {
         <TaskStickers
           priority={taskPriority}
           startDate={taskStartDate}
-          deadline={taskDeadline}
+          deadline={taskDeadLine}
         />
         {props.task.subtasks ? (
           <div className={"d-flex flex-row align-items-center"}>

@@ -35,10 +35,9 @@ const SignIn = (props) => {
   };
   return (
     <>
-      {/* <form className="m-1" onSubmit={(e) => props.signInSubmit(e, email, password)}> */}
       <form className="m-1" onSubmit={signInSubmit}>
         <div className="mb-3">
-          <label className="form-label">Email address</label>
+          <label className="form-label">Почтовый адрес</label>
           <input
             type="email"
             className="form-control"
@@ -48,7 +47,7 @@ const SignIn = (props) => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Password</label>
+          <label className="form-label">Пароль</label>
           <input
             type="password"
             className="form-control"
@@ -58,7 +57,7 @@ const SignIn = (props) => {
           />
         </div>
         <button type="submit" className="btn btn-primary">
-          Submit
+          Войти
         </button>
       </form>
       <p className={"m-0"}>или</p>

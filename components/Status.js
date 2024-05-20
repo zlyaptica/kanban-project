@@ -95,7 +95,6 @@ const Status = (props) => {
         }
       );
       const data = await response.json();
-      console.log("lol");
       props.setStatuses(data.boardData);
       setStatus(data.status);
     }

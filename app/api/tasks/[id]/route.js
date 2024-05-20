@@ -16,11 +16,11 @@ export async function DELETE(request, { params }) {
   await dbConnect();
 
   const task_id = params.id;
-  const data = request.json();
-
+  const data = await request.json();
+  console.log("data", )
   const task = await Task.findOne({ _id: task_id });
-
-  if (data.author_id == task.doer) {
+  const board = await Board.findOne({ _id: task.board_id });
+  if (data.author_id == board.author) {
     const board_id = task.board_id;
     await Subtask.deleteMany({ task: task_id });
     await Task.findByIdAndDelete(task_id);

@@ -92,7 +92,7 @@ const Sidebar = (props) => {
         console.log(data.message);
       } else if (response.status == 200) {
         props.setStatuses(data.boardData);
-        props.setIsSidebarOpen(false)
+        props.setIsSidebarOpen(false);
       }
     }
   };
@@ -377,17 +377,20 @@ const Sidebar = (props) => {
   useEffect(() => {
     if (props.user) setUser(props.user);
 
-    setDescription(props.task.description);
+    if (props.task.description) {
+      setDescription(props.task.description);
+    } else {
+      setDescription("")
+    }
+    
     if (props.task.deadLineDate) {
-      const taskDeadline = new Date(props.task.deadLineDate);
-      setDeadline(taskDeadline.toISOString().split("T")[0]);
+      setDeadline(props.task.deadLineDate);
     } else {
       setDeadline("");
     }
 
-    if (props.task.startDate) {
-      const taskStartDate = new Date(props.task.startDate);
-      setStartDate(taskStartDate.toISOString().split("T")[0]);
+    if (props.task.startDate) {;
+      setStartDate(props.task.startDate);
     } else {
       setStartDate("");
     }
@@ -397,6 +400,7 @@ const Sidebar = (props) => {
     } else {
       setTaskMailDoer("");
     }
+
   }, [props.task, props.user]);
   return (
     <div className={styles.sidebar}>

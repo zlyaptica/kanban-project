@@ -5,10 +5,10 @@ import { NextResponse } from "next/server";
 export async function POST(request) {
   await dbConnect();
 
-  const body = await request.json();
+  const data = await request.json();
 
-  const email = body.email;
-  const password = body.password;
+  const email = data.email;
+  const password = data.password;
   const user = await User.findOne({ email: email });
 
   let correctPassword = false;

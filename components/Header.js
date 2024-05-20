@@ -34,25 +34,15 @@ export default async function Header() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <Link className="nav-link" href={"/"}>
-                Мои задачи
-              </Link>
-            </li>
-            <li className="nav-item">
               <Link className="nav-link" href={`/workplace`}>
                 Мои доски
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" href={`/chat`}>
-                Чат доски
-              </Link>
-            </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <button className="nav-link" onClick={() => updateDBData()}>
                 Загрузить данные в монгу
               </button>
-            </li>
+            </li> */}
           </ul>
           
         <ProfileMenu/>

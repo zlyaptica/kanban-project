@@ -1,24 +1,53 @@
+import { navigateToWorkplace } from "@/app/actions";
 import { useState } from "react";
 
 const SignUp = () => {
-  const [nickname, setNickname] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const signUpSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch(`/api/users/signup`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        password: password,
+      }),
+    });
+    const data = await response.json();
+    if (response.status === 201) {
+      console.log(data.user);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("isAuthenticatedUser", "true");
+        localStorage.setItem("user", JSON.stringify(data.user));
+      }
+      navigateToWorkplace();
+    } else if (response.status === 400) {
+      console.log(data.message);
+    }
+  };
+
   return (
     <>
-      <form>
+      <form onSubmit={signUpSubmit}>
         <div className="mb-3">
-          <label className="form-label">Nickname</label>
+          <label className="form-label">Имя пользователя</label>
           <input
             type="text"
             className="form-control"
-            onChange={(e) => setNickname(e.target.value)}
-            value={nickname}
+            onChange={(e) => setName(e.target.value)}
+            value={name}
             autoComplete="off"
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Email address</label>
+          <label className="form-label">Почтовый адрес</label>
           <input
             type="email"
             className="form-control"
@@ -28,7 +57,7 @@ const SignUp = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Password</label>
+          <label className="form-label">Пароль</label>
           <input
             type="password"
             className="form-control"
@@ -38,7 +67,7 @@ const SignUp = () => {
           />
         </div>
         <button type="submit" className="btn btn-primary">
-          Submit
+          Зарегестрироваться
         </button>
       </form>
     </>

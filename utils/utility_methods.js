@@ -66,6 +66,15 @@ export async function GetTaskStruct(task) {
 
   let subtasks = await Subtask.find({ task: task._id });
 
+  let deadLineDate, startDate
+  if (task.deadLineDate) {
+    deadLineDate = task.deadLineDate.toISOString().split("T")[0]
+  }
+
+  if (task.startDate) {
+    startDate = task.startDate.toISOString().split("T")[0]
+  }
+
   let data = {
     _id: task._id,
     name: task.name,
@@ -75,8 +84,8 @@ export async function GetTaskStruct(task) {
     index: task.index,
     is_completed: task.is_completed,
     priority: task.priority,
-    deadLineDate: task.deadLineDate,
-    startDate: task.startDate,
+    deadLineDate: deadLineDate,
+    startDate: startDate,
     subtasks: subtasks,
   };
   return data;

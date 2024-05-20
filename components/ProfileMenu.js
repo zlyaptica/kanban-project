@@ -9,18 +9,18 @@ const ProfileMenu = () => {
   const logout = () => {
     localStorage.removeItem("isAuthenticatedUser");
     localStorage.removeItem("user");
+    setIsOpenMenu(false)
     navigateToHome();
   }
 
   return (
     <div>
-      <div onBlur={() => setIsOpenMenu(false)}>
+      <div >
         <Image
           alt="profile"
           src={profile}
           width={40}
           height={40}
-          // onClick={() => setIsOpenMenu(!isOpenMenu)}
         />
         {isOpenMenu ? (
           <button
@@ -43,7 +43,7 @@ const ProfileMenu = () => {
         )}
       </div>
       {isOpenMenu ? (
-        <div className={"dropdownMenu"}>
+        <div className={"dropdownMenu"} onBlur={() => setIsOpenMenu(false)}>
           <button className={"dropdownItem"} type="button" onClick={() => logout()}>
             Выйти
           </button>

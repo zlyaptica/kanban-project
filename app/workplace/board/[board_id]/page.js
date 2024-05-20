@@ -9,6 +9,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { navigateToWorkplace } from "@/app/actions";
 import { DeleteNotEmptyBoard } from "@/components/DeleteNotEmptyBoardForm";
 import { Popup } from "@/components/Popup";
+import Link from "next/link";
 
 export default function Board({ params }) {
   const boardID = params.board_id;
@@ -92,7 +93,7 @@ export default function Board({ params }) {
 
   const deleteBoard = async () => {
     if (user) {
-      if (!statuses) {
+      if (statuses.length == 0) {
         const response = await fetch(`/api/board/${boardID}`, {
           method: "DELETE",
           headers: {
@@ -119,6 +120,7 @@ export default function Board({ params }) {
   };
 
   const openTaskInfo = (task) => {
+    // console.log("task", task)
     setCurrentOpenTaskSidebarData(task);
     setIsSidebarOpen(true);
   };
@@ -140,7 +142,6 @@ export default function Board({ params }) {
   const dragLeaveStatusHandler = (e) => {};
 
   const dragStartStatusHandler = (e, status) => {
-
     setCurrentStatus(status);
   };
 
@@ -351,6 +352,11 @@ export default function Board({ params }) {
                         Отменить
                       </button>
                     )}
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" href={`/chat`}>
+                      Чат доски
+                    </Link>
                   </li>
                 </ul>
               </div>
