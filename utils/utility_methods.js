@@ -12,7 +12,7 @@ export async function GetBoardData(board_id) {
   let statusTasks = [];
 
   for (let i = 0; i < statuses.length; i++) {
-    let tasks = await Task.find({ status: statuses[i]._id });
+    let tasks = await Task.find({ status: statuses[i]._id }).sort({index: 1});
     let tasksWithDoerData = [];
     for (let i = 0; i < tasks.length; i++) {
       const data = await GetTaskStruct(tasks[i]);
@@ -80,8 +80,4 @@ export async function GetTaskStruct(task) {
     subtasks: subtasks,
   };
   return data;
-}
-
-export function InRange(x, min, max) {
-  return ((x-min)*(x-max) <= 0);
 }
