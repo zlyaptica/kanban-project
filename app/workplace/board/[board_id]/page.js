@@ -358,7 +358,7 @@ export default function Board({ params }) {
                     )}
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" href={`/chat`}>
+                    <Link className="nav-link" href={`/workplace/board/${boardID}/chat`}>
                       Чат доски
                     </Link>
                   </li>
