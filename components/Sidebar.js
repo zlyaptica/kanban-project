@@ -28,11 +28,6 @@ const Sidebar = (props) => {
     : styles.setDoneButton + " " + "btn btn-outline-success";
 
   const setIsDone = async (task_id, is_completed) => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
-
     if (user) {
       const response = await fetch(`/api/tasks/${task_id}`, {
         method: "POST",
@@ -57,10 +52,6 @@ const Sidebar = (props) => {
   };
 
   const updateTaskName = async (name) => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
     if (user) {
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "POST",
@@ -85,13 +76,7 @@ const Sidebar = (props) => {
   };
 
   const deleteTask = async () => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
-
     if (user) {
-      console.log("userif", user._id);
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "DELETE",
         headers: {
@@ -112,12 +97,8 @@ const Sidebar = (props) => {
   };
 
   const chooseDoer = async () => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
     if (user) {
-      let doer
+      let doer;
       if (props.task.doer) {
         doer = props.task.doer.email;
       }
@@ -150,12 +131,7 @@ const Sidebar = (props) => {
   };
 
   const clearDoer = async () => {
-    console.log(" a tut");
     if (taskMailDoer) {
-      let user;
-      if (typeof window !== "undefined") {
-        user = JSON.parse(localStorage.getItem("user"));
-      }
       if (user) {
         const response = await fetch(`/api/tasks/${props.task._id}`, {
           method: "POST",
@@ -188,10 +164,6 @@ const Sidebar = (props) => {
   };
 
   const updateTaskStartDate = async (startDate) => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
     if (user) {
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "POST",
@@ -219,10 +191,6 @@ const Sidebar = (props) => {
 
   const deleteStartDate = async () => {
     if (startDate) {
-      let user;
-      if (typeof window !== "undefined") {
-        user = JSON.parse(localStorage.getItem("user"));
-      }
       if (user) {
         const response = await fetch(`/api/tasks/${props.task._id}`, {
           method: "POST",
@@ -252,10 +220,6 @@ const Sidebar = (props) => {
   };
 
   const updateTaskDeadline = async (deadline) => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
     if (user) {
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "POST",
@@ -282,10 +246,6 @@ const Sidebar = (props) => {
   };
 
   const updatePriority = async (priority) => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
     if (user) {
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "POST",
@@ -310,10 +270,6 @@ const Sidebar = (props) => {
   };
 
   const updateTaskDescription = async () => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
     if (user) {
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "POST",
@@ -418,11 +374,8 @@ const Sidebar = (props) => {
   };
 
   useEffect(() => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
-    if (user) setUser(user);
+    if (props.user) setUser(props.user);
+
     setDescription(props.task.description);
     if (props.task.deadLineDate) {
       const taskDeadline = new Date(props.task.deadLineDate);
@@ -443,8 +396,7 @@ const Sidebar = (props) => {
     } else {
       setTaskMailDoer("");
     }
-    console.log(props.task);
-  }, [props.task]);
+  }, [props.task, props.user]);
   return (
     <div className={styles.sidebar}>
       <div className={"mt-3"}>

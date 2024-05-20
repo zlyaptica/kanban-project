@@ -4,16 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { StateNameControl } from "@/components/StateNameControl";
 import { Action } from "@/utils/Enums";
-import Image from "next/image";
-import deleteIcon from "../../public/deleteIcon.svg";
-import editIcon from "../../public/editIcon.svg";
 import { navigateToHome } from "../actions";
 
 export default function MyBoards() {
+  const [user, setUser] = useState("");
   const [boards, setBoards] = useState("");
-  const [editBoardNameInputValue, setEditBoardNameInputValue] = useState("");
-  const [editBoardNameInputActive, setEditBoardNameInputActive] =
-    useState(false);
 
   const createBoard = async (name) => {
     let user;
@@ -50,11 +45,12 @@ export default function MyBoards() {
     let user;
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
-      if (!user) {
-        navigateToHome();
-      } else {
-        getUserBoards(user._id);
-      }
+    }
+    if (user) setUser(user);
+    if (!user) {
+      navigateToHome();
+    } else {
+      getUserBoards(user._id);
     }
   }, [boards]);
   return (
