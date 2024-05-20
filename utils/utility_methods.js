@@ -7,7 +7,7 @@ import Subtask from "@/models/Subtask";
 
 export async function GetBoardData(board_id) {
   await dbConnect();
-  let statuses = await Status.find({ board_id: board_id });
+  let statuses = await Status.find({ board_id: board_id }).sort({index: 1});
 
   let statusTasks = [];
 

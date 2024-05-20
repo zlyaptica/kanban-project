@@ -6,7 +6,7 @@ import Board from "@/models/Board";
 
 export async function GET(request, { params }) {
   const board_id = params.board_id;
-  
+
   const board = await Board.findOne({ _id: board_id });
   const statusTasks = await GetBoardData(board._id);
   return NextResponse.json({ statusTasks, board });
@@ -22,8 +22,9 @@ export async function POST(request, { params }) {
   if (board.author == data.author_id) {
     let status = new Status();
     status.board_id = board_id;
-    status.type = data.type
+    status.type = data.type;
     status.name = data.name;
+    status.index = data.index;
     await status.save();
 
     let boardData = await GetBoardData(board_id);

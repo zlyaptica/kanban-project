@@ -47,6 +47,35 @@ export async function POST(request, { params }) {
     await Status.updateOne({ _id: params.id }, { name: data.name });
   }
 
+  if (data.field == "index") {
+    let startIndex, endIndex;
+
+    if (data.setIndex > data.currentStatusIndex) {
+      startIndex = data.currentStatusIndex + 1;
+      endIndex = data.setIndex;
+
+      for (let i = startIndex; i <= endIndex; i++) {
+        await Status.findOneAndUpdate(
+          { board_id: params.board_id, index: i },
+          { index: i - 1 }
+        );
+      }
+    } else {
+      startIndex = data.currentStatusIndex - 1;
+      endIndex = data.setIndex;
+
+      for (let i = startIndex; i >= endIndex; i--) {
+        await Status.findOneAndUpdate(
+          { board_id: params.board_id, index: i },
+          { index: i + 1 }
+        );
+      }
+    }
+    await Status.findByIdAndUpdate(params.id, {
+      index: data.setIndex,
+    });
+  }
+
   let updatedStatus = await Status.findById(params.id);
   let statusData = await GetStatusData(updatedStatus);
 

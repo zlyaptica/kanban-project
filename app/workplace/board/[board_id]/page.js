@@ -54,6 +54,7 @@ export default function Board({ params }) {
           name: name,
           author_id: user._id,
           type: "TODO",
+          index: statuses.length,
         }),
       });
       const data = await response.json();
@@ -151,21 +152,25 @@ export default function Board({ params }) {
     e.preventDefault();
     if (isDraggedTask) {
       if (status._id != currentStatus._id && status.tasks.length == 0) {
-        const response = await fetch(`/api/tasks/${currentTask._id}`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            currentStatusID: currentStatus._id,
-            newStatusID: status._id,
-            currentTaskIndex: currentTask.index,
-            setIndex: 0,
-            field: "index",
-          }),
-        });
+        const response = await fetch(
+          `/api/tasks/${currentTask._id}`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({
+              author_id: user._id,
+              board_id: boardID,
+              currentStatusID: currentStatus._id,
+              newStatusID: status._id,
+              currentTaskIndex: currentTask.index,
+              setIndex: status.index,
+              field: "index",
+            }),
+          }
+        );
         const data = await response.json();
         if (response.status == 403) {
           console.log(data.message);
@@ -179,7 +184,7 @@ export default function Board({ params }) {
     } else {
       if (user) {
         if (status.index != currentStatus.index) {
-          const response = await fetch(`/api/board/${currentStatus._id}`, {
+          const response = await fetch(`/api/board/${boardID}/statuses/${currentStatus._id}`, {
             method: "POST",
             headers: {
               Accept: "application/json",
@@ -187,7 +192,6 @@ export default function Board({ params }) {
             },
             body: JSON.stringify({
               author_id: user._id,
-              newStatusID: status._id,
               currentStatusIndex: currentStatus.index,
               setIndex: status.index,
               field: "index",
