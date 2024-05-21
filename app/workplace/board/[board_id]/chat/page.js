@@ -28,7 +28,8 @@ const Request = async (msg, reqType) => {
   return resJson;
 };
 
-export default function Chat() {
+export default function Chat({ params }) {
+  const boardID = params.board_id;
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const messagesRef = useRef(messages);
@@ -36,7 +37,7 @@ export default function Chat() {
 
   useEffect(() => {
     async function Get() {
-      let res = await fetch("/api/chat");
+      let res = await fetch(`/api/chat/${boardID}`);
       let resJson = await res.json();
       console.log("srem0", resJson);
       setMessages((current) => [...current, ...resJson]);
@@ -50,7 +51,7 @@ export default function Chat() {
     // Create a socket connection
     socket.connect();
     // Listen for incoming messages
-    socket.on("connect", () => {});
+    socket.on("connect", () => { });
     socket.on("broadcastNewMessage", (newMsg) => {
       messagesRef.current = [...messagesRef.current, newMsg];
       setMessages([...messagesRef.current]);
@@ -92,6 +93,7 @@ export default function Chat() {
         text: newMessage,
         authorData: { _id: currentUser._id, name: currentUser.name },
         date: new Date(),
+        board: boardID
       };
       console.log(Msg);
       Request(Msg, "PUT").then((result) => {
@@ -159,7 +161,7 @@ export default function Chat() {
                   </span>
                   <button
                     type="button"
-                    className="btn btn-primary btn-sm pull-right float-end"
+                    className="btn btn-primary btn-sm pull-right float-end mx-1"
                     onClick={() => {
                       deleteBtnClick(message);
                     }}
@@ -168,7 +170,7 @@ export default function Chat() {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-primary btn-sm pull-right float-end"
+                    className="btn btn-primary btn-sm pull-right float-end mx-1"
                     onClick={() => {
                       setEditMessages(message);
                     }}
@@ -209,11 +211,15 @@ export default function Chat() {
           ></textarea>
         </div>
         <div>
-          <button type="button" onClick={handleEditBtnClick}>
+          <button
+            type="button"
+            className={styles.SubmBtn}
+            onClick={handleEditBtnClick}>
             Редактировать
           </button>
           <button
             type="button"
+            className= {styles.SubmBtn}
             onClick={() => {
               setEditMessages({});
             }}

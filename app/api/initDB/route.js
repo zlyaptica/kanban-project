@@ -143,6 +143,14 @@ export async function GET(request) {
   message.text = "И тебе того же";
   message.date = new Date("2023-04-17T10:36:30");
   await message.save();
+  
+  message = new Message();
+  message.board = 1;
+  message.author = users[1]._id;
+  message.index = 3;
+  message.text = "И тебе того же";
+  message.date = new Date("2023-04-17T10:36:30");
+  await message.save();
 
   return NextResponse.json({
     message: "в монгу все запихано",
