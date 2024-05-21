@@ -2,18 +2,9 @@ import Image from "next/image";
 import logo from "../public/kanbanlogo.png";
 import Link from "next/link";
 import { navigateToHome } from "@/app/actions";
-import { ProfileMenu } from "./ProfileMenu";
+import { HeaderNav } from "./HeaderNav";
 
 export default async function Header() {
-
-  const updateDBData = async () => {
-    const response = await fetch(`/api/initDB`);
-    const data = await response.json();
-    console.log(data.message);
-    localStorage.removeItem("isAuthenticatedUser");
-    localStorage.removeItem("user");
-    navigateToHome();
-  };
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -31,22 +22,7 @@ export default async function Header() {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link" href={`/workplace`}>
-                Мои доски
-              </Link>
-            </li>
-            {/* <li className="nav-item">
-              <button className="nav-link" onClick={() => updateDBData()}>
-                Загрузить данные в монгу
-              </button>
-            </li> */}
-          </ul>
-          
-        <ProfileMenu/>
-        </div>
+        <HeaderNav/>
       </div>
     </nav>
   );
