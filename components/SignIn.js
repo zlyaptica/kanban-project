@@ -34,7 +34,8 @@ const SignIn = (props) => {
     }
   };
   return (
-    <>
+    <div className="d-flex flex-column align-items-center">
+      <h5 >ВОЙТИ</h5>
       <form className="m-1" onSubmit={signInSubmit}>
         <div className="mb-3">
           <label className="form-label">Почтовый адрес</label>
@@ -64,7 +65,7 @@ const SignIn = (props) => {
       <button className={"btn btn-link p-0"} onClick={() => popupHandle()}>
         Зарегистрироваться
       </button>
-    </>
+    </div>
   );
 };
 

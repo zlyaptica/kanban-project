@@ -34,7 +34,8 @@ const SignUp = () => {
   };
 
   return (
-    <>
+    <div className="d-flex flex-column align-items-center">
+    <h5 >ВОЙТИ</h5>
       <form onSubmit={signUpSubmit}>
         <div className="mb-3">
           <label className="form-label">Имя пользователя</label>
@@ -70,7 +71,7 @@ const SignUp = () => {
           Зарегестрироваться
         </button>
       </form>
-    </>
+    </div>
   );
 };
 
