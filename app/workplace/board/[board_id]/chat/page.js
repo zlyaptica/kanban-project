@@ -109,7 +109,7 @@ export default function Chat({ params }) {
   const deleteBtnClick = (message) => {
     Request(message, "DELETE").then((result) => {
       if ((result.status = 200)) {
-        messagesRef.current = messagesRef.filter((el) => {
+        messagesRef.current = messagesRef.current.filter((el) => {
           return el._id != message._id;
         });
         setMessages([...messagesRef.current]);
