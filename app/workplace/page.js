@@ -75,6 +75,42 @@ export default function MyBoards() {
             </div>
           ))}
       </div>
+      {/* <Example/> */}
     </div>
   );
+}
+
+function Example() {
+  const onFocusDiv = (e) => {
+    if (e.currentTarget === e.target) {
+      console.log("фокус на родителе установлен")
+    } else {
+      console.log("фокус на ребенке", e.target)
+    }
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      // не срабатывает при перемещении фкуса между дочерними элементами
+      console.log("фокус находится внутри родительского элема")
+    }
+  }
+
+  const onBlurDiv = (e) => {
+    if (e.currentTarget === e.target) {
+      console.log("фокус на родителе снят")
+    } else {
+      console.log("фокус на ребенке снят", e.target)
+    }
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      // не срабатывает при перемещении фкуса между дочерними элементами
+      console.log("фокус потерян извнутри родительского элема")
+    }
+  }
+  return (
+    <div tabIndex={1}
+      onFocus={(e) => onFocusDiv(e)}
+      onBlur={(e) => onBlurDiv(e)}
+    >
+      <input id="1"/>
+      <input id="2"/>
+    </div>
+  )
 }

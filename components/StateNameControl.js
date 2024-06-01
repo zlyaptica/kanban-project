@@ -30,20 +30,6 @@ const StateNameControl = (props) => {
     }
   };
 
-  // const handleKeyDown = (e) => {
-  //     if (e.keyCode === 27) {
-  //         setIsActiveInput(false)
-  //         setInputValue('')
-  //         if (props.status == Status.updateStateName || props.status == Status.updateTaskName) {
-  //             setInputValue(props.stateName)
-  //         }
-  //     }
-
-  //     if (e.keyCode === 13) {
-  //         confirmButton()
-  //     }
-  // }
-
   const confirmButton = () => {
     if (inputValue) {
       props.confirmButton(inputValue);

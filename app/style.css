@@ -86,4 +86,14 @@ input::placeholder {
 
 /* end app/workplace/page.js */
 
+zindex100 {
+    z-index: 100;
+}
 
+zindex101 {
+    z-index: 101;
+}
+
+zindex102 {
+    z-index: 102;
+}

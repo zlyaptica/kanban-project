@@ -374,6 +374,28 @@ const Sidebar = (props) => {
     }
   };
 
+  const handleKeyDown = (e, field) => {
+    // если нажат эскейп, то отмена
+    if (e.keyCode === 27) {
+      if (field === "subtask") {
+        cancelCreateSubtask()
+      }
+      if (field === "doer") {
+        clearDoer()
+      }
+    }
+
+    // если нажат энтер, то успех
+    if (e.keyCode === 13) {
+      if (field === "subtask") {
+        createSubtask(user, props.task._id, createSubtaskInputValue)
+      }
+      if (field === "doer") {
+        chooseDoer()
+      }
+    }
+  };
+
   useEffect(() => {
     if (props.user) setUser(props.user);
 
@@ -382,14 +404,14 @@ const Sidebar = (props) => {
     } else {
       setDescription("")
     }
-    
+
     if (props.task.deadLineDate) {
       setDeadline(props.task.deadLineDate);
     } else {
       setDeadline("");
     }
 
-    if (props.task.startDate) {;
+    if (props.task.startDate) {
       setStartDate(props.task.startDate);
     } else {
       setStartDate("");
@@ -466,6 +488,7 @@ const Sidebar = (props) => {
                 value={taskMailDoer}
                 autoFocus
                 onChange={(e) => setTaskMailDoer(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, "doer")}
               />
               <div className="">
                 <button
@@ -578,6 +601,7 @@ const Sidebar = (props) => {
                   placeholder="Введите название..."
                   value={createSubtaskInputValue}
                   onChange={(e) => setCreateSubtaskInputValue(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, "subtask")}
                 />
                 <div className="input-group-append">
                   <button

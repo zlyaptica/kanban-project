@@ -5,13 +5,13 @@ import Image from "next/image";
 const Subtask = (props) => {
   const [checked, setChecked] = useState(false);
   const checkSubtask = () => {
-    // setChecked(!checked)
     props.checkSubtask(props.subtask._id, !checked)
   }
 
   useEffect(() => {
     setChecked(props.subtask.done)
   }, [props.subtask])
+  
   return (
     <div className={"d-flex align-items-center"}>
       <div className={"p-1"}>
