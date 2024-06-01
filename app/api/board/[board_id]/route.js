@@ -4,7 +4,20 @@ import Board from "@/models/Board";
 import Status from "@/models/Status";
 import Subtask from "@/models/Subtask";
 import Task from "@/models/Task";
+import User from "@/models/User";
 import { NextResponse } from "next/server";
+
+export async function GET(request, { params }) {
+  await dbConnect()
+  const board_id = params.board_id;
+  const board = await Board.findOne({ _id: board_id }) // структура доски из бд
+  return NextResponse.json(
+    { board },
+    {
+      status: 200,
+    }
+  );
+}
 
 export async function DELETE(request, { params }) {
   await dbConnect();

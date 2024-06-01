@@ -8,51 +8,53 @@ import { useEffect, useState } from "react";
 
 const Status = (props) => {
   const [user, setUser] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(props.status);
 
   const createTask = async (taskName) => {
-    if (user) {
-      const response = await fetch(
-        `/api//board/${props.boardID}/statuses/${props.status._id}/tasks`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            boardID: status._id,
-            name: taskName,
-            is_completed: false,
-            creator: user.name,
-            created_at: new Date(),
-            start_date: "",
-            deadline: "",
-            description: "",
-            priority: 0,
-            doer: "",
-            index: status.tasks.length,
-            author_id: user._id,
-          }),
-        }
-      );
-      const data = await response.json();
-      if (response.status == 403) {
-        console.log(data.message);
-      } else if (response.status == 201) {
-        setStatus(data.statusData);
+    if (!props.isAdmin) return
+
+    const response = await fetch(
+      `/api/board/${props.boardData._id}/statuses/${props.status._id}/tasks`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          boardID: status._id,
+          name: taskName,
+          is_completed: false,
+          creator: user.name,
+          created_at: new Date(),
+          start_date: "",
+          deadline: "",
+          description: "",
+          priority: 0,
+          doer: "",
+          index: status.tasks.length,
+          author_id: user._id,
+        }),
       }
+    );
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 201) {
+      setStatus(data.statusData);
     }
   };
 
   const deleteStatus = async () => {
+    if (!props.isAdmin) return
+
     if (props.status.tasks.length != 0) {
       // props.setRemovableState(state);
       // props.setDeleteNotEmptyBoardPopupActive(true);
     } else {
       if (user) {
         const response = await fetch(
-          `/api/board/${props.boardID}/statuses/${props.status._id}`,
+          `/api/board/${props.boardData._id}/statuses/${props.status._id}`,
           {
             method: "DELETE",
             headers: {
@@ -61,7 +63,7 @@ const Status = (props) => {
             },
             body: JSON.stringify({
               is_save_tasks: false,
-              board_id: props.boardID,
+              board_id: props.boardData._id,
               author_id: user._id,
             }),
           }
@@ -78,49 +80,49 @@ const Status = (props) => {
   };
 
   const updateStatusName = async (name) => {
-    if (user) {
-      const response = await fetch(
-        `/api/board/${props.boardID}/statuses/${props.status._id}`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            name: name,
-            field: "name",
-          }),
-        }
-      );
-      const data = await response.json();
-      props.setStatuses(data.boardData);
-      setStatus(data.status);
-    }
+    if (!props.isAdmin) return
+
+    const response = await fetch(
+      `/api/board/${props.boardData._id}/statuses/${props.status._id}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          name: name,
+          field: "name",
+        }),
+      }
+    );
+    const data = await response.json();
+    props.setStatuses(data.boardData);
+    setStatus(data.status);
   };
 
   const updateStatusType = async (type) => {
-    if (user) {
-      const response = await fetch(
-        `/api/board/${props.boardID}/statuses/${props.status._id}`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            type: type,
-            field: "type",
-          }),
-        }
-      );
-      const data = await response.json();
-      props.setStatuses(data.boardData);
-      setStatus(data.status);
-    }
+    if (!props.isAdmin) return
+
+    const response = await fetch(
+      `/api/board/${props.boardData._id}/statuses/${props.status._id}`,
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          type: type,
+          field: "type",
+        }),
+      }
+    );
+    const data = await response.json();
+    props.setStatuses(data.boardData);
+    setStatus(data.status);
   };
 
   let statusColor;
@@ -131,8 +133,8 @@ const Status = (props) => {
   useEffect(() => {
     if (props.user) {
       setUser(props.user);
+
     }
-    setStatus(props.status);
   }, [props.status, props.user]);
 
   return (
@@ -142,34 +144,39 @@ const Status = (props) => {
           <StateNameControl
             className={styles.stateNameControl}
             action={Action.updateStateName}
+            isAdmin={props.isAdmin}
             nameControlHeader={status.name}
             inputValue={status.name}
             act="Введите название статуса"
             confirmButton={updateStatusName}
           />
         </div>
-        <StatusMenu
-          status={status}
-          deleteStatus={deleteStatus}
-          updateStatusType={updateStatusType}
-        />
+        {props.isAdmin ?
+          <StatusMenu
+            status={status}
+            deleteStatus={deleteStatus}
+            updateStatusType={updateStatusType}
+          />
+          : null}
       </div>
       <div className={styles.tasks}>
         <div className={styles.createTask}>
-          <StateNameControl
-            action={Action.createTask}
-            nameControlHeader="Создать задачу"
-            act="Создать задачу"
-            tasks={status.tasks}
-            confirmButton={createTask}
-          />
+          {props.isAdmin ?
+            <StateNameControl
+              isAdmin={props.isAdmin}
+              action={Action.createTask}
+              nameControlHeader="Создать задачу"
+              act="Создать задачу"
+              tasks={status.tasks}
+              confirmButton={createTask}
+            /> : null}
         </div>
         {status.tasks &&
           status.tasks.map((task, key) => (
             <div
               key={key}
               className={styles.task}
-              draggable={true}
+              draggable={props.isAdmin}
               onDragOver={(e) => props.dragOverTaskHandler(e)}
               onDragLeave={(e) => props.dragLeaveTaskHandler(e)}
               onDragStart={(e) => props.dragStartTaskHandler(e, status, task)}
@@ -177,6 +184,8 @@ const Status = (props) => {
               onDrop={(e) => props.dropTaskHandler(e, status, task)}
             >
               <Task
+                user={props.user}
+                isAdmin={props.isAdmin}
                 task={task}
                 openTaskInfo={props.openTaskInfo}
                 setStatuses={props.setStatuses}

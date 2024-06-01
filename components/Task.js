@@ -10,35 +10,26 @@ const Task = (props) => {
   let taskStartDate = props.task.startDate ? props.task.startDate : null;
   let taskDeadLine = props.task.deadLineDate ? props.task.deadLineDate : null;
 
-  // if (props.task.startDate) new Date()
-  // if (props.task.deadLineDate) new Date
-
   const setIsDone = async (task_id) => {
-    let user;
-    if (typeof window !== "undefined") {
-      user = JSON.parse(localStorage.getItem("user"));
-    }
-
-    if (user) {
-      const response = await fetch(`/api/tasks/${task_id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          author_id: user._id,
-          is_completed: !props.task.is_completed,
-          field: "is_completed",
-        }),
-      });
-      const data = await response.json();
-      if (response.status == 403) {
-        console.log(data.message);
-      } else if (response.status == 200) {
-        props.setStatuses(data.boardData);
-        props.setCurrentOpenTaskSidebarData(data.updatedTask);
-      }
+    if (!props.isAdmin) return
+    const response = await fetch(`/api/tasks/${task_id}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        author_id: user._id,
+        is_completed: !props.task.is_completed,
+        field: "is_completed",
+      }),
+    });
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 200) {
+      props.setStatuses(data.boardData);
+      props.setCurrentOpenTaskSidebarData(data.updatedTask);
     }
   };
 
@@ -52,14 +43,11 @@ const Task = (props) => {
         className="me-1"
         onClick={() => setIsDone(props.task._id)}
       />
-      <div>
+      <div onClick={() => props.openTaskInfo(props.task)}>
         {props.task.doer ? (
           <p className={styles.taskDoer}>{props.task.doer.name}</p>
         ) : null}
-        <p
-          className={styles.taskHeader}
-          onClick={() => props.openTaskInfo(props.task)}
-        >
+        <p className={styles.taskHeader}>
           {props.task.name}
         </p>
         <TaskStickers

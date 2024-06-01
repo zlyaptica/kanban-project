@@ -54,31 +54,37 @@ const StateNameControl = (props) => {
 
   return (
     <>
-      {!isActiveInput ? (
-        <p
-          className={headerControl}
-          onClick={() => setIsActiveInput(true)}
-          onKeyDown={(e) => handleKeyDown(e)}
-        >
-          {props.nameControlHeader}
-        </p>
-      ) : (
-        <div className={styles.inputControl}>
-          <form>
-            <input
-              type="text"
-              name="stateName"
-              placeholder={props.act}
-              onBlur={() => confirmButton()}
-              autoFocus
-              onChange={(e) => setInputValue(e.target.value)}
-              value={inputValue}
-              required
+      {props.isAdmin ?
+        <div>
+          {!isActiveInput ? (
+            <p
+              className={headerControl}
+              onClick={() => setIsActiveInput(true)}
               onKeyDown={(e) => handleKeyDown(e)}
-            />
-          </form>
+            >
+              {props.nameControlHeader}
+            </p>
+          ) : (
+            <div className={styles.inputControl}>
+              <form>
+                <input
+                  type="text"
+                  name="stateName"
+                  placeholder={props.act}
+                  onBlur={() => confirmButton()}
+                  autoFocus
+                  onChange={(e) => setInputValue(e.target.value)}
+                  value={inputValue}
+                  required
+                  onKeyDown={(e) => handleKeyDown(e)}
+                />
+              </form>
+            </div>
+          )}
         </div>
-      )}
+        :
+        <p className={headerControl}>{props.nameControlHeader}</p>
+      }
     </>
   );
 };

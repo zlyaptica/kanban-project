@@ -15,6 +15,8 @@ export default function Board({ params }) {
   const boardID = params.board_id;
 
   const [user, setUser] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false)
+
   const [statuses, setStatuses] = useState([]);
   const [boardData, setBoardData] = useState(""); // данные о сущности Доска
 
@@ -42,91 +44,93 @@ export default function Board({ params }) {
     ? styles.sidebar + " " + styles.sidebarOpen
     : styles.sidebar;
 
+
   const createStatus = async (name) => {
-    if (user) {
-      const response = await fetch(`/api/board/${boardID}/statuses`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          name: name,
-          author_id: user._id,
-          type: "TODO",
-          index: statuses.length,
-        }),
-      });
-      const data = await response.json();
-      if (response.status == 403) {
-        console.log(data.message);
-      } else if (response.status == 201) {
-        console.log(data.message);
-        setStatuses(await data.boardData);
-      }
+    if (!isAdmin) return
+
+    const response = await fetch(`/api/board/${boardID}/statuses`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        name: name,
+        author_id: user._id,
+        type: "TODO",
+        index: statuses.length,
+      }),
+    });
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 201) {
+      console.log(data.message);
+      setStatuses(await data.boardData);
     }
   };
 
   const updateBoardName = async () => {
-    if (user) {
-      const response = await fetch(`/api/board/${boardID}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          author_id: user._id,
-          name: editBoardNameInputValue,
-        }),
-      });
-      const data = await response.json();
-      if (response.status == 403) {
-        console.log(data.message);
-      } else if (response.status == 200) {
-        console.log(data);
-        setBoardData(data.updatedBoard);
-      }
+    if (!isAdmin) return
+
+    const response = await fetch(`/api/board/${boardID}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        author_id: user._id,
+        name: editBoardNameInputValue,
+      }),
+    });
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 200) {
+      console.log(data);
+      setBoardData(data.updatedBoard);
     }
     setEditBoardNameInputActive(false);
     setEditBoardNameInputValue("");
   };
 
   const deleteBoard = async () => {
-    if (user) {
-      if (statuses.length == 0) {
-        const response = await fetch(`/api/board/${boardID}`, {
-          method: "DELETE",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            empty_board: true,
-          }),
-        });
-        const data = await response.json();
-        console.log(data);
-        if (response.status == 403) {
-          console.log(data.message);
-        } else if (response.status == 200) {
-          navigateToWorkplace();
-        }
-      } else {
-        setRemovableData(statuses);
-        setDeleteNotEmptyObjectPopupActive(true);
+    if (!isAdmin) return
+
+    if (statuses.length == 0) {
+      const response = await fetch(`/api/board/${boardID}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          empty_board: true,
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        navigateToWorkplace();
       }
+    } else {
+      setRemovableData(statuses);
+      setDeleteNotEmptyObjectPopupActive(true);
     }
   };
 
   const openTaskInfo = (task) => {
-    // console.log("task", task)
     setCurrentOpenTaskSidebarData(task);
     setIsSidebarOpen(true);
   };
 
   const startEditBoardName = () => {
+    if (!isAdmin) return
+
     setEditBoardNameInputActive(true);
     setEditBoardNameInputValue(boardData.name);
   };
@@ -137,19 +141,24 @@ export default function Board({ params }) {
   };
 
   const dragOverStatusHandler = (e) => {
+    if (!isAdmin) return
+
     e.preventDefault();
   };
 
-  const dragLeaveStatusHandler = (e) => {};
+  const dragLeaveStatusHandler = (e) => { };
 
   const dragStartStatusHandler = (e, status) => {
-    setCurrentStatus(status);
+    if (isAdmin) {
+      setCurrentStatus(status);
+    }
   };
 
-  const dragEndStatusHandler = (e) => {};
+  const dragEndStatusHandler = (e) => { };
 
   const dropStatusHandler = async (e, status) => {
     e.preventDefault();
+    if (!isAdmin) return
     if (isDraggedTask) {
       if (status._id != currentStatus._id && status.tasks.length == 0) {
         const response = await fetch(
@@ -182,30 +191,29 @@ export default function Board({ params }) {
         setIsDraggedTask(false);
       }
     } else {
-      if (user) {
-        if (status.index != currentStatus.index) {
-          const response = await fetch(`/api/board/${boardID}/statuses/${currentStatus._id}`, {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json;charset=utf-8",
-            },
-            body: JSON.stringify({
-              author_id: user._id,
-              currentStatusIndex: currentStatus.index,
-              setIndex: status.index,
-              field: "index",
-            }),
-          });
-          const data = await response.json();
-          if (response.status == 403) {
-            console.log(data.message);
-          } else if (response.status == 200) {
-            setStatuses(data.boardData);
-          }
-          setCurrentStatus(null);
-          setCurrentTask(null);
+      if (!user) return
+      if (status.index != currentStatus.index) {
+        const response = await fetch(`/api/board/${boardID}/statuses/${currentStatus._id}`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            author_id: user._id,
+            currentStatusIndex: currentStatus.index,
+            setIndex: status.index,
+            field: "index",
+          }),
+        });
+        const data = await response.json();
+        if (response.status == 403) {
+          console.log(data.message);
+        } else if (response.status == 200) {
+          setStatuses(data.boardData);
         }
+        setCurrentStatus(null);
+        setCurrentTask(null);
       }
     }
   };
@@ -222,9 +230,11 @@ export default function Board({ params }) {
   };
 
   const dragStartTaskHandler = async (e, status, task) => {
-    setIsDraggedTask(true);
-    setCurrentStatus(status);
-    setCurrentTask(task);
+    if (isAdmin) {
+      setIsDraggedTask(true);
+      setCurrentStatus(status);
+      setCurrentTask(task);
+    }
   };
 
   const dragEndTaskHandler = async (e) => {
@@ -234,38 +244,38 @@ export default function Board({ params }) {
 
   const dropTaskHandler = async (e, status, task) => {
     e.preventDefault();
-    if (user) {
-      if (
-        !(
-          status.index == currentStatus.index && task.index == currentTask.index
-        )
-      ) {
-        const response = await fetch(`/api/tasks/${currentTask._id}`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            currentStatusID: currentStatus._id,
-            newStatusID: status._id,
-            currentTaskIndex: currentTask.index,
-            setIndex: task.index,
-            field: "index",
-          }),
-        });
-        const data = await response.json();
-        if (response.status == 403) {
-          console.log(data.message);
-        } else if (response.status == 200) {
-          setStatuses(data.boardData);
-        }
+    if (!isAdmin) return
+
+    if (
+      !(
+        status.index == currentStatus.index && task.index == currentTask.index
+      )
+    ) {
+      const response = await fetch(`/api/tasks/${currentTask._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          currentStatusID: currentStatus._id,
+          newStatusID: status._id,
+          currentTaskIndex: currentTask.index,
+          setIndex: task.index,
+          field: "index",
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        setStatuses(data.boardData);
       }
+      setCurrentStatus(null);
+      setCurrentTask(null);
+      setIsDraggedTask(false);
     }
-    setCurrentStatus(null);
-    setCurrentTask(null);
-    setIsDraggedTask(false);
   };
 
   useEffect(() => {
@@ -284,21 +294,29 @@ export default function Board({ params }) {
         let data = await response.json();
         console.log(data.message);
       }
-      const response = await fetch(`/api/board/${boardID}/statuses`);
-      const data = await response.json();
+      let response = await fetch(`/api/board/${boardID}/statuses`);
+      let data = await response.json();
       setStatuses(data.statusTasks);
+
+      response = await fetch(`/api/board/${boardID}`)
+      data = await response.json();
       setBoardData(data.board);
     }
-    let user;
     if (typeof window !== "undefined") {
+      let user;
       user = JSON.parse(localStorage.getItem("user"));
+      if (user) setUser(user);
     }
-    if (user) setUser(user);
 
     if (user) {
       getStatuses(true, user._id);
     } else {
       getStatuses(false);
+    }
+    if (user) {
+      if (boardData.author === user._id) {
+        setIsAdmin(true)
+      }
     }
   }, []);
   return (
@@ -323,40 +341,42 @@ export default function Board({ params }) {
                       }
                     />
                   )}
-                  <li className="nav-item">
-                    {!editBoardNameInputActive ? (
-                      <button
-                        className="nav-link"
-                        onClick={() => startEditBoardName()}
-                      >
-                        Изменить название
-                      </button>
-                    ) : (
-                      <button
-                        className="nav-link"
-                        onClick={() => updateBoardName()}
-                      >
-                        Сохранить
-                      </button>
-                    )}
-                  </li>
-                  <li className="nav-item">
-                    {!editBoardNameInputActive ? (
-                      <button
-                        className="nav-link"
-                        onClick={() => deleteBoard()}
-                      >
-                        Удалить доску
-                      </button>
-                    ) : (
-                      <button
-                        className="nav-link"
-                        onClick={() => endEditBoardName()}
-                      >
-                        Отменить
-                      </button>
-                    )}
-                  </li>
+                  {isAdmin ?
+                    <li className="nav-item">
+                      {!editBoardNameInputActive ? (
+                        <button
+                          className="nav-link"
+                          onClick={() => startEditBoardName()}
+                        >
+                          Изменить название
+                        </button>
+                      ) : (
+                        <button
+                          className="nav-link"
+                          onClick={() => updateBoardName()}
+                        >
+                          Сохранить
+                        </button>
+                      )}
+                    </li> : null}
+                  {isAdmin ?
+                    <li className="nav-item">
+                      {!editBoardNameInputActive ? (
+                        <button
+                          className="nav-link"
+                          onClick={() => deleteBoard()}
+                        >
+                          Удалить доску
+                        </button>
+                      ) : (
+                        <button
+                          className="nav-link"
+                          onClick={() => endEditBoardName()}
+                        >
+                          Отменить
+                        </button>
+                      )}
+                    </li> : null}
                   <li className="nav-item">
                     <Link className="nav-link" href={`/workplace/board/${boardID}/chat`}>
                       Чат доски
@@ -383,9 +403,10 @@ export default function Board({ params }) {
               >
                 <Status
                   user={user}
+                  isAdmin={isAdmin}
                   status={status}
                   openTaskInfo={openTaskInfo}
-                  boardID={boardID}
+                  boardData={boardData}
                   setStatuses={setStatuses}
                   setCurrentOpenTaskSidebarData={setCurrentOpenTaskSidebarData}
                   dragOverTaskHandler={dragOverTaskHandler}
@@ -396,20 +417,22 @@ export default function Board({ params }) {
                 />
               </div>
             ))}
-          <div className={"p-2 m-2"}>
-            <StateNameControl
-              action={Action.createState}
-              nameControlHeader="Создать новый статус"
-              act="Создать новый статус"
-              confirmButton={createStatus}
-            />
-          </div>
+          {isAdmin ?
+            <div className={"p-2 m-2"}>
+              <StateNameControl
+                action={Action.createState}
+                nameControlHeader="Создать новый статус"
+                act="Создать новый статус"
+                confirmButton={createStatus}
+              />
+            </div> : null}
         </div>
       </div>
       <div className={sidebarStyles}>
         {isSidebarOpen ? (
           <Sidebar
             user={user}
+            isAdmin={isAdmin}
             task={currentOpenTaskSidebarData}
             setTask={setCurrentOpenTaskSidebarData}
             setIsSidebarOpen={setIsSidebarOpen}

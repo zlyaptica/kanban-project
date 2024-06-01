@@ -3,7 +3,6 @@ import styles from "@/styles/Sidebar.module.css";
 import { useEffect, useState } from "react";
 import { Action } from "@/utils/Enums";
 import deleteIcon from "../public/deleteIcon.svg";
-import galochka from "../public/galochka.svg";
 import { StateNameControl } from "./StateNameControl";
 import { Subtask } from "./Subtask";
 
@@ -28,72 +27,72 @@ const Sidebar = (props) => {
     : styles.setDoneButton + " " + "btn btn-outline-success";
 
   const setIsDone = async (task_id, is_completed) => {
-    if (user) {
-      const response = await fetch(`/api/tasks/${task_id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          author_id: user._id,
-          is_completed: is_completed,
-          field: "is_completed",
-        }),
-      });
-      const data = await response.json();
-      if (response.status == 403) {
-        console.log(data.message);
-      } else if (response.status == 200) {
-        props.setStatuses(data.boardData);
-        props.setTask(data.updatedTask);
-      }
+    if (!isAdmin) return
+
+    const response = await fetch(`/api/tasks/${task_id}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        author_id: user._id,
+        is_completed: is_completed,
+        field: "is_completed",
+      }),
+    });
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 200) {
+      props.setStatuses(data.boardData);
+      props.setTask(data.updatedTask);
     }
   };
 
   const updateTaskName = async (name) => {
-    if (user) {
-      const response = await fetch(`/api/tasks/${props.task._id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          author_id: user._id,
-          name: name,
-          field: "name",
-        }),
-      });
-      const data = await response.json();
-      if (response.status == 403) {
-        console.log(data.message);
-      } else if (response.status == 200) {
-        props.setStatuses(data.boardData);
-        props.setTask(data.updatedTask);
-      }
+    if (!props.isAdmin) return
+
+    const response = await fetch(`/api/tasks/${props.task._id}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        author_id: user._id,
+        name: name,
+        field: "name",
+      }),
+    });
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 200) {
+      props.setStatuses(data.boardData);
+      props.setTask(data.updatedTask);
     }
   };
 
   const deleteTask = async () => {
-    if (user) {
-      const response = await fetch(`/api/tasks/${props.task._id}`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          author_id: user._id,
-        }),
-      });
-      const data = await response.json();
-      if (response.status == 403) {
-        console.log(data.message);
-      } else if (response.status == 200) {
-        props.setStatuses(data.boardData);
-        props.setIsSidebarOpen(false);
-      }
+    if (!props.isAdmin) return
+
+    const response = await fetch(`/api/tasks/${props.task._id}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        author_id: user._id,
+      }),
+    });
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 200) {
+      props.setStatuses(data.boardData);
+      props.setIsSidebarOpen(false);
     }
   };
 
@@ -435,27 +434,32 @@ const Sidebar = (props) => {
             ></button>
           </div>
           <div className="p-2">
-            <button
-              className={setDoneClass}
-              onClick={() =>
-                setIsDone(props.task._id, !props.task.is_completed)
-              }
-            >
-              Выполнено
-            </button>
+            {props.isAdmin ?
+              <button
+                className={setDoneClass}
+                onClick={() =>
+                  setIsDone(props.task._id, !props.task.is_completed)
+                }
+              >
+                Выполнено
+              </button>
+              :
+              <button className={setDoneClass}>Выполнено</button>}
           </div>
-          <div className={"cursor-pointer ml-auto p-2"}>
-            <Image
-              src={deleteIcon}
-              height={20}
-              width={20}
-              alt="Удалить задачу"
-              onClick={() => deleteTask(props.task._id)}
-            />
-          </div>
+          {props.isAdmin ?
+            <div className={"cursor-pointer ml-auto p-2"}>
+              <Image
+                src={deleteIcon}
+                height={20}
+                width={20}
+                alt="Удалить задачу"
+                onClick={() => deleteTask(props.task._id)}
+              />
+            </div> : null}
         </div>
         <div className={styles.stateNameControl}>
           <StateNameControl
+            isAdmin={props.isAdmin}
             action={Action.updateTaskName}
             inputValue={props.task.name}
             nameControlHeader={props.task.name}
@@ -466,10 +470,19 @@ const Sidebar = (props) => {
         <div>
           {props.task.doer && !isTaskMailDoerInputActive ? (
             <div>
-              <h6 className={"m-0 me-1"}>Исполнитель</h6>
-              <p onClick={() => setIsTaskMailDoerInputActive(true)}>
-                {props.task.doer.name}
-              </p>
+              {props.isAdmin ?
+                <div>
+                  <h6 className={"m-0 me-1"}>Исполнитель</h6>
+                  <p onClick={() => setIsTaskMailDoerInputActive(true)}>
+                    {props.task.doer.name}
+                  </p>
+                </div>
+                :
+                <div>
+                  <h6 className={"m-0 me-1"}>Исполнитель</h6>
+                  <p>{props.task.doer.name}</p>
+                </div>
+              }
             </div>
           ) : null}
           {!props.task.doer && !isTaskMailDoerInputActive ? (
@@ -521,74 +534,96 @@ const Sidebar = (props) => {
             <div className="d-flex flex-column me-3">
               <div className="d-flex align-items-center">
                 <h6 className={"m-0 me-1"}>Дата начала</h6>
-                <button
-                  className={
-                    styles.deleteStartDateButton + " " + "btn-close me-2"
-                  }
-                  onClick={() => deleteStartDate()}
-                ></button>
+                {props.isAdmin ?
+                  <button
+                    className={
+                      styles.deleteStartDateButton + " " + "btn-close me-2"
+                    }
+                    onClick={() => deleteStartDate()}
+                  ></button> : null}
               </div>
-              <input
-                className={styles.input}
-                type="date"
-                name="startdate"
-                value={startDate}
-                onChange={(e) => updateTaskStartDate(e.target.value)}
-              />
+              {props.isAdmin ?
+                <input
+                  className={styles.input}
+                  type="date"
+                  name="startdate"
+                  value={startDate}
+                  onChange={(e) => updateTaskStartDate(e.target.value)}
+                /> : null}
             </div>
           ) : null}
           <div className="d-flex flex-column">
             <h6 className={"m-0"}>Дата окончания</h6>
-            <input
-              className={styles.input}
-              type="date"
-              name="deadline"
-              value={deadline}
-              onChange={(e) => updateTaskDeadline(e.target.value)}
-            />
+            {props.isAdmin ?
+              <input
+                className={styles.input}
+                type="date"
+                name="deadline"
+                value={deadline}
+                onChange={(e) => updateTaskDeadline(e.target.value)}
+              />
+              : <p>{deadline}</p>
+            }
           </div>
           {!isStartDateChosen & !startDate ? (
-            <button
-              className="btn btn-link text-decoration-none"
-              onClick={() => setIsStartDateChosen(true)}
-            >
-              Добавить дату начала
-            </button>
+            <div>
+              {props.isAdmin ?
+                <button
+                  className="btn btn-link text-decoration-none"
+                  onClick={() => setIsStartDateChosen(true)}
+                >
+                  Добавить дату начала
+                </button>
+                : null}
+            </div>
           ) : null}
         </div>
         <div className={"d-flex flex-column"}>
           <h6 className={"font-weight-bold m-0"}>Приоритет</h6>
-          <select
-            className={styles.input}
-            name="priority"
-            value={props.task.priority}
-            onChange={(e) => updatePriority(e.target.value)}
-          >
-            <option id="0" value="0">
-              ——
-            </option>
-            <option id="1" value="1">
-              Низкий
-            </option>
-            <option id="2" value="2">
-              Средний
-            </option>
-            <option id="3" value="3">
-              Высокий
-            </option>
-          </select>
+          {props.isAdmin ?
+            <select
+              className={styles.input}
+              name="priority"
+              value={props.task.priority}
+              onChange={(e) => updatePriority(e.target.value)}
+            >
+              <option id="0" value="0">
+                ——
+              </option>
+              <option id="1" value="1">
+                Низкий
+              </option>
+              <option id="2" value="2">
+                Средний
+              </option>
+              <option id="3" value="3">
+                Высокий
+              </option>
+            </select>
+            :
+            <p>{props.task.priority}</p>}
         </div>
         <div className={"d-flex flex-column mb-3"}>
           <h6 className={"font-weight-bold m-0"}>Описание</h6>
+          {props.isAdmin ?
           <textarea
+          name=""
+          cols="40"
+          rows="10"
+          className={styles.description}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          onBlur={() => updateTaskDescription()}
+        ></textarea>
+      :
+      <textarea
             name=""
             cols="40"
             rows="10"
             className={styles.description}
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            onBlur={() => updateTaskDescription()}
-          ></textarea>
+            readOnly={true}
+          ></textarea>}
         </div>
         <div className="d-flex flex-column">
           <h6 className={"font-weight-bold m-0 mb-1"}>Подзадачи</h6>
@@ -627,18 +662,23 @@ const Sidebar = (props) => {
                 </div>
               </div>
             ) : (
-              <button
-                className={"btn btn-link p-0 text-decoration-none"}
-                onClick={() => setCreateSubtaskInputActive(true)}
-              >
-                Создать подзадачу
-              </button>
+              <div>
+                {props.isAdmin ?
+                  <button
+                    className={"btn btn-link p-0 text-decoration-none"}
+                    onClick={() => setCreateSubtaskInputActive(true)}
+                  >
+                    Создать подзадачу
+                  </button>
+                  : null}
+              </div>
             )}
           </div>
           {props.task.subtasks &&
             props.task.subtasks.map((subtask, key) => (
               <div key={key}>
                 <Subtask
+                  isAdmin={props.isAdmin}
                   subtask={subtask}
                   deleteSubtask={deleteSubtask}
                   checkSubtask={checkSubtask}
