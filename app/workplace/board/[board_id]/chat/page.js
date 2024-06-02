@@ -109,16 +109,16 @@ export default function Chat({ params }) {
   const deleteBtnClick = (message) => {
     Request(message, "DELETE").then((result) => {
       if ((result.status = 200)) {
+        console.log(message)
+        
+        socket.emit("deleteMessage", messagesRef.current.find((el) => {
+            return el._id == message._id;
+          })
+        );
         messagesRef.current = messagesRef.current.filter((el) => {
           return el._id != message._id;
         });
         setMessages([...messagesRef.current]);
-        socket.emit(
-          "deleteMessage",
-          messagesRef.current.find((el) => {
-            return el._id == message._id;
-          })
-        );
       } else {
         console.log("Ooops something gone wrong", result.status);
       }
