@@ -14,8 +14,8 @@ import Link from "next/link";
 export default function Board({ params }) {
   const boardID = params.board_id;
 
-  const [user, setUser] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false)
+  const [userData, setUserData] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const [statuses, setStatuses] = useState([]);
   const [boardData, setBoardData] = useState(""); // данные о сущности Доска
@@ -27,6 +27,7 @@ export default function Board({ params }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [removableData, setRemovableData] = useState("");
+  const [removableDataType, setRemovableDataType] = useState("");
   const [deleteNotEmptyObjectPopupActive, setDeleteNotEmptyObjectPopupActive] =
     useState(false);
 
@@ -44,9 +45,8 @@ export default function Board({ params }) {
     ? styles.sidebar + " " + styles.sidebarOpen
     : styles.sidebar;
 
-
   const createStatus = async (name) => {
-    if (!isAdmin) return
+    if (!isAdmin) return;
 
     const response = await fetch(`/api/board/${boardID}/statuses`, {
       method: "POST",
@@ -56,7 +56,7 @@ export default function Board({ params }) {
       },
       body: JSON.stringify({
         name: name,
-        author_id: user._id,
+        author_id: userData._id,
         type: "TODO",
         index: statuses.length,
       }),
@@ -71,7 +71,7 @@ export default function Board({ params }) {
   };
 
   const updateBoardName = async () => {
-    if (!isAdmin) return
+    if (!isAdmin) return;
 
     const response = await fetch(`/api/board/${boardID}`, {
       method: "POST",
@@ -80,7 +80,7 @@ export default function Board({ params }) {
         "Content-Type": "application/json;charset=utf-8",
       },
       body: JSON.stringify({
-        author_id: user._id,
+        author_id: userData._id,
         name: editBoardNameInputValue,
       }),
     });
@@ -96,7 +96,7 @@ export default function Board({ params }) {
   };
 
   const deleteBoard = async () => {
-    if (!isAdmin) return
+    if (!isAdmin) return;
 
     if (statuses.length == 0) {
       const response = await fetch(`/api/board/${boardID}`, {
@@ -106,7 +106,7 @@ export default function Board({ params }) {
           "Content-Type": "application/json;charset=utf-8",
         },
         body: JSON.stringify({
-          author_id: user._id,
+          author_id: userData._id,
           empty_board: true,
         }),
       });
@@ -119,6 +119,7 @@ export default function Board({ params }) {
       }
     } else {
       setRemovableData(statuses);
+      setRemovableDataType("board");
       setDeleteNotEmptyObjectPopupActive(true);
     }
   };
@@ -129,7 +130,7 @@ export default function Board({ params }) {
   };
 
   const startEditBoardName = () => {
-    if (!isAdmin) return
+    if (!isAdmin) return;
 
     setEditBoardNameInputActive(true);
     setEditBoardNameInputValue(boardData.name);
@@ -141,12 +142,12 @@ export default function Board({ params }) {
   };
 
   const dragOverStatusHandler = (e) => {
-    if (!isAdmin) return
+    if (!isAdmin) return;
 
     e.preventDefault();
   };
 
-  const dragLeaveStatusHandler = (e) => { };
+  const dragLeaveStatusHandler = (e) => {};
 
   const dragStartStatusHandler = (e, status) => {
     if (isAdmin) {
@@ -154,32 +155,29 @@ export default function Board({ params }) {
     }
   };
 
-  const dragEndStatusHandler = (e) => { };
+  const dragEndStatusHandler = (e) => {};
 
   const dropStatusHandler = async (e, status) => {
     e.preventDefault();
-    if (!isAdmin) return
+    if (!isAdmin) return;
     if (isDraggedTask) {
       if (status._id != currentStatus._id && status.tasks.length == 0) {
-        const response = await fetch(
-          `/api/tasks/${currentTask._id}`,
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json;charset=utf-8",
-            },
-            body: JSON.stringify({
-              author_id: user._id,
-              board_id: boardID,
-              currentStatusID: currentStatus._id,
-              newStatusID: status._id,
-              currentTaskIndex: currentTask.index,
-              setIndex: status.index,
-              field: "index",
-            }),
-          }
-        );
+        const response = await fetch(`/api/tasks/${currentTask._id}`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            author_id: userData._id,
+            board_id: boardID,
+            currentStatusID: currentStatus._id,
+            newStatusID: status._id,
+            currentTaskIndex: currentTask.index,
+            setIndex: status.index,
+            field: "index",
+          }),
+        });
         const data = await response.json();
         if (response.status == 403) {
           console.log(data.message);
@@ -191,21 +189,24 @@ export default function Board({ params }) {
         setIsDraggedTask(false);
       }
     } else {
-      if (!user) return
+      if (!userData) return;
       if (status.index != currentStatus.index) {
-        const response = await fetch(`/api/board/${boardID}/statuses/${currentStatus._id}`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            currentStatusIndex: currentStatus.index,
-            setIndex: status.index,
-            field: "index",
-          }),
-        });
+        const response = await fetch(
+          `/api/board/${boardID}/statuses/${currentStatus._id}`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({
+              author_id: userData._id,
+              currentStatusIndex: currentStatus.index,
+              setIndex: status.index,
+              field: "index",
+            }),
+          }
+        );
         const data = await response.json();
         if (response.status == 403) {
           console.log(data.message);
@@ -244,12 +245,10 @@ export default function Board({ params }) {
 
   const dropTaskHandler = async (e, status, task) => {
     e.preventDefault();
-    if (!isAdmin) return
+    if (!isAdmin) return;
 
     if (
-      !(
-        status.index == currentStatus.index && task.index == currentTask.index
-      )
+      !(status.index == currentStatus.index && task.index == currentTask.index)
     ) {
       const response = await fetch(`/api/tasks/${currentTask._id}`, {
         method: "POST",
@@ -258,7 +257,7 @@ export default function Board({ params }) {
           "Content-Type": "application/json;charset=utf-8",
         },
         body: JSON.stringify({
-          author_id: user._id,
+          author_id: userData._id,
           currentStatusID: currentStatus._id,
           newStatusID: status._id,
           currentTaskIndex: currentTask.index,
@@ -297,28 +296,37 @@ export default function Board({ params }) {
       let response = await fetch(`/api/board/${boardID}/statuses`);
       let data = await response.json();
       setStatuses(data.statusTasks);
-
-      response = await fetch(`/api/board/${boardID}`)
-      data = await response.json();
-      setBoardData(data.board);
     }
     if (typeof window !== "undefined") {
       let user;
       user = JSON.parse(localStorage.getItem("user"));
-      if (user) setUser(user);
+      if (user) setUserData(user);
     }
 
-    if (user) {
-      getStatuses(true, user._id);
+    if (userData) {
+      getStatuses(true, userData._id);
     } else {
       getStatuses(false);
     }
-    if (user) {
-      if (boardData.author === user._id) {
-        setIsAdmin(true)
+  }, []);
+
+  useEffect(() => {
+    async function getBoardData() {
+      const response = await fetch(`/api/board/${boardID}`);
+      const data = await response.json();
+      setBoardData(data.board);
+    }
+    getBoardData();
+  }, [userData]);
+
+  useEffect(() => {
+    if (userData) {
+      if (boardData.author === userData._id) {
+        setIsAdmin(true);
       }
     }
-  }, []);
+  }, [userData, boardData]);
+
   return (
     <div className={canbanStyles}>
       <div className={"d-flex flex-column"}>
@@ -341,7 +349,7 @@ export default function Board({ params }) {
                       }
                     />
                   )}
-                  {isAdmin ?
+                  {isAdmin ? (
                     <li className="nav-item">
                       {!editBoardNameInputActive ? (
                         <button
@@ -358,8 +366,9 @@ export default function Board({ params }) {
                           Сохранить
                         </button>
                       )}
-                    </li> : null}
-                  {isAdmin ?
+                    </li>
+                  ) : null}
+                  {isAdmin ? (
                     <li className="nav-item">
                       {!editBoardNameInputActive ? (
                         <button
@@ -376,9 +385,13 @@ export default function Board({ params }) {
                           Отменить
                         </button>
                       )}
-                    </li> : null}
+                    </li>
+                  ) : null}
                   <li className="nav-item">
-                    <Link className="nav-link" href={`/workplace/board/${boardID}/chat`}>
+                    <Link
+                      className="nav-link"
+                      href={`/workplace/board/${boardID}/chat`}
+                    >
                       Чат доски
                     </Link>
                   </li>
@@ -402,13 +415,18 @@ export default function Board({ params }) {
                 onDrop={(e) => dropStatusHandler(e, status)}
               >
                 <Status
-                  user={user}
+                  user={userData}
                   isAdmin={isAdmin}
                   status={status}
                   openTaskInfo={openTaskInfo}
                   boardData={boardData}
                   setStatuses={setStatuses}
                   setCurrentOpenTaskSidebarData={setCurrentOpenTaskSidebarData}
+                  setRemovableData={setRemovableData}
+                  setRemovableDataType={setRemovableDataType}
+                  setDeleteNotEmptyObjectPopupActive={
+                    setDeleteNotEmptyObjectPopupActive
+                  }
                   dragOverTaskHandler={dragOverTaskHandler}
                   dragLeaveTaskHandler={dragLeaveTaskHandler}
                   dragStartTaskHandler={dragStartTaskHandler}
@@ -417,21 +435,23 @@ export default function Board({ params }) {
                 />
               </div>
             ))}
-          {isAdmin ?
+          {isAdmin ? (
             <div className={"p-2 m-2"}>
               <StateNameControl
                 action={Action.createState}
+                isAdmin={isAdmin}
                 nameControlHeader="Создать новый статус"
                 act="Создать новый статус"
                 confirmButton={createStatus}
               />
-            </div> : null}
+            </div>
+          ) : null}
         </div>
       </div>
       <div className={sidebarStyles}>
         {isSidebarOpen ? (
           <Sidebar
-            user={user}
+            user={userData}
             isAdmin={isAdmin}
             task={currentOpenTaskSidebarData}
             setTask={setCurrentOpenTaskSidebarData}
@@ -445,9 +465,12 @@ export default function Board({ params }) {
         setActive={setDeleteNotEmptyObjectPopupActive}
       >
         <DeleteNotEmptyBoard
+          user={userData}
+          isAdmin={isAdmin}
+          setStatuses={setStatuses}
           data={removableData}
+          removableDataType={removableDataType}
           setActive={setDeleteNotEmptyObjectPopupActive}
-          type="board"
           boardID={boardID}
         />
       </Popup>

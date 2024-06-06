@@ -6,43 +6,47 @@ const DeleteNotEmptyBoard = (props) => {
   const [deleteWay, setDeleteWay] = useState(1);
   const [isChecked, setIsChecked] = useState(false);
 
-  const deleteBoard = async (type, deleteWay) => {
-    if (type == "board") {
-      let user;
-      if (typeof window !== "undefined") {
-        user = JSON.parse(localStorage.getItem("user"));
-      }
+  const deleteObject = (type) => {
+    if (!props.isAdmin) return;
+    type === board ? deleteBoard() : deleteStatus(deleteWay);
+  };
 
-      if (user) {
-        const response = await fetch(`/api/board/${props.boardID}`, {
-          method: "DELETE",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            empty_board: false,
-          }),
-        });
-        const data = await response.json();
-        if (response.status == 403) {
-          console.log(data.message);
-        } else if (response.status == 200) {
-          navigateToWorkplace();
-        }
-      }
-    }
-
-    if (type == "status") {
-      const body = {
-        is_save_tasks: deleteWay == 1 ? true : false, // если путь 1, то мы сохраняем задачи
-      };
-      props.setStates(await DeleteState(props.state._id, body));
-      props.setActive(false);
+  const deleteBoard = async () => {
+    const response = await fetch(`/api/board/${props.boardID}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        author_id: props.user._id,
+        empty_board: false,
+      }),
+    });
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 200) {
+      navigateToWorkplace();
     }
   };
 
+  const deleteStatus = async (deleteWay) => {
+    const response = await fetch(`/api/board/${props.boardID}/statuses/${props.data._id}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        author_id: props.user._id,
+        is_save_tasks: deleteWay == 1 ? true : false, // если путь 1, то мы сохраняем задачи
+      }),
+    });
+    const data = await response.json()
+    props.setStatuses(data.boardData);
+    props.setActive(false);
+  };
   return (
     <div className={styles.deleteBoard}>
       {props.type == "board" ? (
@@ -99,8 +103,8 @@ const DeleteNotEmptyBoard = (props) => {
         <button
           type="button"
           className="btn btn-sm btn-danger m-1"
-          disabled={props.type == "board" ? !isChecked : false}
-          onClick={() => deleteBoard(props.type, deleteWay)}
+          disabled={props.removableDataType == "board" ? !isChecked : false}
+          onClick={() => deleteObject(props.removableDataType)}
         >
           Удалить
         </button>

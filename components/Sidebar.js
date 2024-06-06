@@ -27,7 +27,7 @@ const Sidebar = (props) => {
     : styles.setDoneButton + " " + "btn btn-outline-success";
 
   const setIsDone = async (task_id, is_completed) => {
-    if (!isAdmin) return
+    if (!props.isAdmin) return;
 
     const response = await fetch(`/api/tasks/${task_id}`, {
       method: "POST",
@@ -51,7 +51,7 @@ const Sidebar = (props) => {
   };
 
   const updateTaskName = async (name) => {
-    if (!props.isAdmin) return
+    if (!props.isAdmin) return;
 
     const response = await fetch(`/api/tasks/${props.task._id}`, {
       method: "POST",
@@ -75,7 +75,7 @@ const Sidebar = (props) => {
   };
 
   const deleteTask = async () => {
-    if (!props.isAdmin) return
+    if (!props.isAdmin) return;
 
     const response = await fetch(`/api/tasks/${props.task._id}`, {
       method: "DELETE",
@@ -97,74 +97,13 @@ const Sidebar = (props) => {
   };
 
   const chooseDoer = async () => {
-    if (user) {
-      let doer;
-      if (props.task.doer) {
-        doer = props.task.doer.email;
-      }
-      if (taskMailDoer !== doer) {
-        const response = await fetch(`/api/tasks/${props.task._id}`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            doerEmail: taskMailDoer,
-            field: "doer",
-            type: "set",
-          }),
-        });
-        const data = await response.json();
-        console.log(data);
-        if (response.status == 403) {
-          console.log(data.message);
-        } else if (response.status == 200) {
-          setTaskMailDoer(taskMailDoer);
-          props.setStatuses(data.boardData);
-          props.setTask(data.updatedTask);
-        }
-      }
-      setIsTaskMailDoerInputActive(false);
-    }
-  };
+    if (!props.isAdmin) return;
 
-  const clearDoer = async () => {
-    if (taskMailDoer) {
-      if (user) {
-        const response = await fetch(`/api/tasks/${props.task._id}`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            doerEmail: taskMailDoer,
-            field: "doer",
-            type: "unset",
-          }),
-        });
-        const data = await response.json();
-        if (response.status == 403) {
-          console.log(data.message);
-        } else if (response.status == 200) {
-          props.setStatuses(data.boardData);
-          props.setTask(data.updatedTask);
-          setTaskMailDoer("");
-        } else {
-          console.log("errorrr");
-        }
-      }
-    } else {
-      setTaskMailDoer("");
-      setIsTaskMailDoerInputActive(false);
+    let doer;
+    if (props.task.doer) {
+      doer = props.task.doer.email;
     }
-  };
-
-  const updateTaskStartDate = async (startDate) => {
-    if (user) {
+    if (taskMailDoer !== doer) {
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "POST",
         headers: {
@@ -173,7 +112,95 @@ const Sidebar = (props) => {
         },
         body: JSON.stringify({
           author_id: user._id,
-          startDate: startDate != "" ? new Date(startDate) : "",
+          doerEmail: taskMailDoer,
+          field: "doer",
+          type: "set",
+        }),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        setTaskMailDoer(taskMailDoer);
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+      }
+    }
+    setIsTaskMailDoerInputActive(false);
+  };
+
+  const clearDoer = async () => {
+    if (!props.isAdmin) return;
+
+    if (taskMailDoer) {
+      const response = await fetch(`/api/tasks/${props.task._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          doerEmail: taskMailDoer,
+          field: "doer",
+          type: "unset",
+        }),
+      });
+      const data = await response.json();
+      if (response.status == 403) {
+        console.log(data.message);
+      } else if (response.status == 200) {
+        props.setStatuses(data.boardData);
+        props.setTask(data.updatedTask);
+        setTaskMailDoer("");
+      } else {
+        console.log("errorrr");
+      }
+    } else {
+      setTaskMailDoer("");
+      setIsTaskMailDoerInputActive(false);
+    }
+  };
+
+  const updateTaskStartDate = async (startDate) => {
+    if (!props.isAdmin) return;
+    const response = await fetch(`/api/tasks/${props.task._id}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        author_id: user._id,
+        startDate: startDate != "" ? new Date(startDate) : "",
+        field: "startDate",
+      }),
+    });
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 200) {
+      props.setStatuses(data.boardData);
+      props.setTask(data.updatedTask);
+    } else if (response.status == 400) {
+      console.log(data.message);
+    }
+  };
+
+  const deleteStartDate = async () => {
+    if (!props.isAdmin) return;
+
+    if (startDate) {
+      const response = await fetch(`/api/tasks/${props.task._id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: user._id,
+          startDate: "",
           field: "startDate",
         }),
       });
@@ -186,67 +213,39 @@ const Sidebar = (props) => {
       } else if (response.status == 400) {
         console.log(data.message);
       }
-    }
-  };
-
-  const deleteStartDate = async () => {
-    if (startDate) {
-      if (user) {
-        const response = await fetch(`/api/tasks/${props.task._id}`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=utf-8",
-          },
-          body: JSON.stringify({
-            author_id: user._id,
-            startDate: "",
-            field: "startDate",
-          }),
-        });
-        const data = await response.json();
-        if (response.status == 403) {
-          console.log(data.message);
-        } else if (response.status == 200) {
-          props.setStatuses(data.boardData);
-          props.setTask(data.updatedTask);
-        } else if (response.status == 400) {
-          console.log(data.message);
-        }
-      }
     } else {
       setIsStartDateChosen(false);
     }
   };
 
   const updateTaskDeadline = async (deadline) => {
-    if (user) {
-      const response = await fetch(`/api/tasks/${props.task._id}`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify({
-          author_id: user._id,
-          deadLineDate: deadline != "" ? new Date(deadline) : "",
-          field: "deadLineDate",
-        }),
-      });
-      const data = await response.json();
-      if (response.status == 403) {
-        console.log(data.message);
-      } else if (response.status == 200) {
-        props.setStatuses(data.boardData);
-        props.setTask(data.updatedTask);
-      } else if (response.status == 400) {
-        console.log(data.message);
-      }
+    if (!props.isAdmin) return;
+
+    const response = await fetch(`/api/tasks/${props.task._id}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=utf-8",
+      },
+      body: JSON.stringify({
+        author_id: user._id,
+        deadLineDate: deadline != "" ? new Date(deadline) : "",
+        field: "deadLineDate",
+      }),
+    });
+    const data = await response.json();
+    if (response.status == 403) {
+      console.log(data.message);
+    } else if (response.status == 200) {
+      props.setStatuses(data.boardData);
+      props.setTask(data.updatedTask);
+    } else if (response.status == 400) {
+      console.log(data.message);
     }
   };
 
   const updatePriority = async (priority) => {
-    if (user) {
+   if (!props.isAdmin) return;
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "POST",
         headers: {
@@ -266,11 +265,11 @@ const Sidebar = (props) => {
         props.setStatuses(data.boardData);
         props.setTask(data.updatedTask);
       }
-    }
   };
 
   const updateTaskDescription = async () => {
-    if (user) {
+    if (!props.isAdmin) return;
+
       const response = await fetch(`/api/tasks/${props.task._id}`, {
         method: "POST",
         headers: {
@@ -290,11 +289,10 @@ const Sidebar = (props) => {
         props.setStatuses(data.boardData);
         props.setTask(data.updatedTask);
       }
-    }
   };
 
   const createSubtask = async (user, taskID, taskName) => {
-    if (user) {
+    if (!props.isAdmin) return;
       const response = await fetch(`/api/subtasks`, {
         method: "POST",
         headers: {
@@ -316,11 +314,10 @@ const Sidebar = (props) => {
         setCreateSubtaskInputValue("");
         setCreateSubtaskInputActive(false);
       }
-    }
   };
 
   const checkSubtask = async (subtask_id, done) => {
-    if (user) {
+    if (!props.isAdmin) return;
       const response = await fetch(`/api/subtasks/${subtask_id}`, {
         method: "POST",
         headers: {
@@ -342,7 +339,6 @@ const Sidebar = (props) => {
         props.setStatuses(data.boardData);
         props.setTask(data.updatedTask);
       }
-    }
   };
 
   const cancelCreateSubtask = () => {
@@ -351,7 +347,8 @@ const Sidebar = (props) => {
   };
 
   const deleteSubtask = async (subtask_id) => {
-    if (user) {
+    if (!props.isAdmin) return;
+
       const response = await fetch(`/api/subtasks/${subtask_id}`, {
         method: "DELETE",
         headers: {
@@ -370,59 +367,66 @@ const Sidebar = (props) => {
         props.setStatuses(data.boardData);
         props.setTask(data.updatedTask);
       }
-    }
   };
 
   const handleKeyDown = (e, field) => {
     // если нажат эскейп, то отмена
     if (e.keyCode === 27) {
       if (field === "subtask") {
-        cancelCreateSubtask()
+        cancelCreateSubtask();
       }
       if (field === "doer") {
-        clearDoer()
+        clearDoer();
       }
     }
 
     // если нажат энтер, то успех
     if (e.keyCode === 13) {
       if (field === "subtask") {
-        createSubtask(user, props.task._id, createSubtaskInputValue)
+        createSubtask(user, props.task._id, createSubtaskInputValue);
       }
       if (field === "doer") {
-        chooseDoer()
+        chooseDoer();
       }
     }
   };
 
   useEffect(() => {
     if (props.user) setUser(props.user);
+  }, [props.user])
 
+  useEffect(() => {
     if (props.task.description) {
       setDescription(props.task.description);
     } else {
-      setDescription("")
+      setDescription("");
     }
+  }, [props.task.description])
 
+  useEffect(() => {
     if (props.task.deadLineDate) {
       setDeadline(props.task.deadLineDate);
     } else {
       setDeadline("");
     }
+  }, [props.task.deadLineDate])
 
+  useEffect(() => {
     if (props.task.startDate) {
       setStartDate(props.task.startDate);
     } else {
       setStartDate("");
     }
+  }, [props.task.startDate])
 
+  useEffect(() => {
     if (props.task.doer) {
       setTaskMailDoer(props.task.doer.email);
     } else {
       setTaskMailDoer("");
     }
+  }, [props.task.doer]);
 
-  }, [props.task, props.user]);
   return (
     <div className={styles.sidebar}>
       <div className={"mt-3"}>
@@ -434,7 +438,7 @@ const Sidebar = (props) => {
             ></button>
           </div>
           <div className="p-2">
-            {props.isAdmin ?
+            {props.isAdmin ? (
               <button
                 className={setDoneClass}
                 onClick={() =>
@@ -443,10 +447,11 @@ const Sidebar = (props) => {
               >
                 Выполнено
               </button>
-              :
-              <button className={setDoneClass}>Выполнено</button>}
+            ) : (
+              <button className={setDoneClass}>Выполнено</button>
+            )}
           </div>
-          {props.isAdmin ?
+          {props.isAdmin ? (
             <div className={"cursor-pointer ml-auto p-2"}>
               <Image
                 src={deleteIcon}
@@ -455,7 +460,8 @@ const Sidebar = (props) => {
                 alt="Удалить задачу"
                 onClick={() => deleteTask(props.task._id)}
               />
-            </div> : null}
+            </div>
+          ) : null}
         </div>
         <div className={styles.stateNameControl}>
           <StateNameControl
@@ -470,19 +476,19 @@ const Sidebar = (props) => {
         <div>
           {props.task.doer && !isTaskMailDoerInputActive ? (
             <div>
-              {props.isAdmin ?
+              {props.isAdmin ? (
                 <div>
                   <h6 className={"m-0 me-1"}>Исполнитель</h6>
                   <p onClick={() => setIsTaskMailDoerInputActive(true)}>
                     {props.task.doer.name}
                   </p>
                 </div>
-                :
+              ) : (
                 <div>
                   <h6 className={"m-0 me-1"}>Исполнитель</h6>
                   <p>{props.task.doer.name}</p>
                 </div>
-              }
+              )}
             </div>
           ) : null}
           {!props.task.doer && !isTaskMailDoerInputActive ? (
@@ -534,27 +540,29 @@ const Sidebar = (props) => {
             <div className="d-flex flex-column me-3">
               <div className="d-flex align-items-center">
                 <h6 className={"m-0 me-1"}>Дата начала</h6>
-                {props.isAdmin ?
+                {props.isAdmin ? (
                   <button
                     className={
                       styles.deleteStartDateButton + " " + "btn-close me-2"
                     }
                     onClick={() => deleteStartDate()}
-                  ></button> : null}
+                  ></button>
+                ) : null}
               </div>
-              {props.isAdmin ?
+              {props.isAdmin ? (
                 <input
                   className={styles.input}
                   type="date"
                   name="startdate"
                   value={startDate}
                   onChange={(e) => updateTaskStartDate(e.target.value)}
-                /> : null}
+                />
+              ) : null}
             </div>
           ) : null}
           <div className="d-flex flex-column">
             <h6 className={"m-0"}>Дата окончания</h6>
-            {props.isAdmin ?
+            {props.isAdmin ? (
               <input
                 className={styles.input}
                 type="date"
@@ -562,25 +570,26 @@ const Sidebar = (props) => {
                 value={deadline}
                 onChange={(e) => updateTaskDeadline(e.target.value)}
               />
-              : <p>{deadline}</p>
-            }
+            ) : (
+              <p>{deadline}</p>
+            )}
           </div>
           {!isStartDateChosen & !startDate ? (
             <div>
-              {props.isAdmin ?
+              {props.isAdmin ? (
                 <button
                   className="btn btn-link text-decoration-none"
                   onClick={() => setIsStartDateChosen(true)}
                 >
                   Добавить дату начала
                 </button>
-                : null}
+              ) : null}
             </div>
           ) : null}
         </div>
         <div className={"d-flex flex-column"}>
           <h6 className={"font-weight-bold m-0"}>Приоритет</h6>
-          {props.isAdmin ?
+          {props.isAdmin ? (
             <select
               className={styles.input}
               name="priority"
@@ -600,30 +609,32 @@ const Sidebar = (props) => {
                 Высокий
               </option>
             </select>
-            :
-            <p>{props.task.priority}</p>}
+          ) : (
+            <p>{props.task.priority}</p>
+          )}
         </div>
         <div className={"d-flex flex-column mb-3"}>
           <h6 className={"font-weight-bold m-0"}>Описание</h6>
-          {props.isAdmin ?
-          <textarea
-          name=""
-          cols="40"
-          rows="10"
-          className={styles.description}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          onBlur={() => updateTaskDescription()}
-        ></textarea>
-      :
-      <textarea
-            name=""
-            cols="40"
-            rows="10"
-            className={styles.description}
-            value={description}
-            readOnly={true}
-          ></textarea>}
+          {props.isAdmin ? (
+            <textarea
+              name=""
+              cols="40"
+              rows="10"
+              className={styles.description}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              onBlur={() => updateTaskDescription()}
+            ></textarea>
+          ) : (
+            <textarea
+              name=""
+              cols="40"
+              rows="10"
+              className={styles.description}
+              value={description}
+              readOnly={true}
+            ></textarea>
+          )}
         </div>
         <div className="d-flex flex-column">
           <h6 className={"font-weight-bold m-0 mb-1"}>Подзадачи</h6>
@@ -663,14 +674,14 @@ const Sidebar = (props) => {
               </div>
             ) : (
               <div>
-                {props.isAdmin ?
+                {props.isAdmin ? (
                   <button
                     className={"btn btn-link p-0 text-decoration-none"}
                     onClick={() => setCreateSubtaskInputActive(true)}
                   >
                     Создать подзадачу
                   </button>
-                  : null}
+                ) : null}
               </div>
             )}
           </div>

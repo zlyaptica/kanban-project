@@ -17,15 +17,13 @@ export async function DELETE(request, { params }) {
 
   const task_id = params.id;
   const data = await request.json();
-  console.log("data", )
   const task = await Task.findOne({ _id: task_id });
   const board = await Board.findOne({ _id: task.board_id });
   if (data.author_id == board.author) {
-    const board_id = task.board_id;
     await Subtask.deleteMany({ task: task_id });
     await Task.findByIdAndDelete(task_id);
 
-    let boardData = await GetBoardData(board_id);
+    let boardData = await GetBoardData(board._id);
     return NextResponse.json(
       {
         message: "task deleted",

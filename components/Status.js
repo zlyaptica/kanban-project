@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 const Status = (props) => {
   const [user, setUser] = useState("");
-  const [status, setStatus] = useState(props.status);
+  const [status, setStatus] = useState("");
 
   const createTask = async (taskName) => {
     if (!props.isAdmin) return
@@ -48,9 +48,10 @@ const Status = (props) => {
   const deleteStatus = async () => {
     if (!props.isAdmin) return
 
-    if (props.status.tasks.length != 0) {
-      // props.setRemovableState(state);
-      // props.setDeleteNotEmptyBoardPopupActive(true);
+    if (status.tasks.length != 0) {
+      props.setRemovableData(status);
+      props.setRemovableDataType("status")
+      props.setDeleteNotEmptyObjectPopupActive(true);
     } else {
       if (user) {
         const response = await fetch(
@@ -72,7 +73,6 @@ const Status = (props) => {
         if (response.status == 403) {
           console.log(data.message);
         } else if (response.status == 200) {
-          console.log(data.boardData);
           props.setStatuses(await data.boardData);
         }
       }
@@ -131,10 +131,8 @@ const Status = (props) => {
   if (props.status.type == "DONE") statusColor = styles.bgColorDONE;
 
   useEffect(() => {
-    if (props.user) {
-      setUser(props.user);
-
-    }
+    if (props.user) setUser(props.user);
+    if (props.status) setStatus(props.status)
   }, [props.status, props.user]);
 
   return (

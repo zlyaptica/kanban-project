@@ -41,7 +41,7 @@ const StateNameControl = (props) => {
       ) {
         setInputValue("");
       } else {
-        setInputValue(props.inputValue)
+        setInputValue(props.inputValue);
       }
     }
     setIsActiveInput(false);
@@ -54,7 +54,7 @@ const StateNameControl = (props) => {
 
   return (
     <>
-      {props.isAdmin ?
+      {props.isAdmin ? (
         <div>
           {!isActiveInput ? (
             <p
@@ -82,9 +82,9 @@ const StateNameControl = (props) => {
             </div>
           )}
         </div>
-        :
+      ) : (
         <p className={headerControl}>{props.nameControlHeader}</p>
-      }
+      )}
     </>
   );
 };
