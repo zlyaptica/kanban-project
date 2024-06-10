@@ -6,7 +6,7 @@
 
 .canbanAndActiveSidebar {
     display: grid;
-    grid-template-columns: auto 220px;
+    grid-template-columns: auto 20%;
     grid-template-rows: 1fr;
 }
 
@@ -21,7 +21,7 @@
     width: 0;
     height: 100%;
     border-left: 2px solid black;
-    min-width: 220px;
+    min-width: 250px;
     z-index: 999;
 }
 
@@ -34,6 +34,32 @@
     margin-right: 10px;
 }
 
+.createStatus {
+    min-width: 260px;
+}
+
+@media (min-width: 1200px) {
+    .sidebar {
+        min-width: 300px;
+    }
+}
+
+/* Portrait tablets and medium desktops */
+@media (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+/* Portrait tablets and small desktops */
+@media (min-width: 768px) and (max-width: 991px) {
+
+}
+
+/* Landscape phones and portrait tablets */
+@media (max-width: 767px) {
+
+}
+
+/* Landscape phones and smaller */
 @media (max-width: 540px) {
     .sidebar {
         min-width: 100%;

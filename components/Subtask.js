@@ -3,16 +3,16 @@ import deleteIcon from "../public/deleteIcon.svg";
 import Image from "next/image";
 
 const Subtask = (props) => {
-  const [checked, setChecked] = useState(props.subtask.done);
+  const [checked, setChecked] = useState("");
   const checkSubtask = () => {
-    if (props.isAdmin) return
+    if (!props.isAdmin) return
 
     props.checkSubtask(props.subtask._id, !checked)
   }
 
-  // useEffect(() => {
-  //   setChecked(props.subtask.done)
-  // }, [props.subtask])
+  useEffect(() => {
+    setChecked(props.subtask.done)
+  }, [props.subtask])
 
   return (
     <div className={"d-flex align-items-center"}>
