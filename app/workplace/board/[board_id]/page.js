@@ -147,7 +147,7 @@ export default function Board({ params }) {
     e.preventDefault();
   };
 
-  const dragLeaveStatusHandler = (e) => {};
+  const dragLeaveStatusHandler = (e) => { };
 
   const dragStartStatusHandler = (e, status) => {
     if (isAdmin) {
@@ -155,7 +155,7 @@ export default function Board({ params }) {
     }
   };
 
-  const dragEndStatusHandler = (e) => {};
+  const dragEndStatusHandler = (e) => { };
 
   const dropStatusHandler = async (e, status) => {
     e.preventDefault();
@@ -247,9 +247,8 @@ export default function Board({ params }) {
     e.preventDefault();
     if (!isAdmin) return;
 
-    if (
-      !(status.index == currentStatus.index && task.index == currentTask.index)
-    ) {
+    if (!(status.index == currentStatus.index &&
+      task.index == currentTask.index)) {
       const response = await fetch(`/api/tasks/${currentTask._id}`, {
         method: "POST",
         headers: {
@@ -290,13 +289,12 @@ export default function Board({ params }) {
             board_id: boardID,
           }),
         });
-        let data = await response.json();
-        console.log(data.message);
       }
       let response = await fetch(`/api/board/${boardID}/statuses`);
       let data = await response.json();
       setStatuses(data.statusTasks);
     }
+    
     if (typeof window !== "undefined") {
       let user;
       user = JSON.parse(localStorage.getItem("user"));

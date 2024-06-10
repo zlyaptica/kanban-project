@@ -36,23 +36,22 @@ export default function MyBoards() {
     const getUserBoards = async (user_id) => {
       const response = await fetch(`/api/users/${user_id}/boards`);
       const data = await response.json();
-      if (data.boards) {
-        setBoards(data.boards);
-      } else {
-        console.log("нет досок");
-      }
+      if (data.boards) setBoards(data.boards);
     };
+    
     let user;
     if (typeof window !== "undefined") {
       user = JSON.parse(localStorage.getItem("user"));
+      if (user) setUser(user);
     }
-    if (user) setUser(user);
+
     if (!user) {
       navigateToHome();
-    } else {
-      getUserBoards(user._id);
+      return
     }
-  }, [boards]);
+    getUserBoards(user._id);
+
+  }, []);
   return (
     <div className={"m-2"}>
       <StateNameControl

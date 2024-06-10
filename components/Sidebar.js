@@ -1,7 +1,7 @@
 import Image from "next/image";
 import styles from "@/styles/Sidebar.module.css";
 import { useEffect, useState } from "react";
-import { Action } from "@/utils/Enums";
+import { Action, TaskAttributes } from "@/utils/Enums";
 import deleteIcon from "../public/deleteIcon.svg";
 import { StateNameControl } from "./StateNameControl";
 import { Subtask } from "./Subtask";
@@ -557,7 +557,9 @@ const Sidebar = (props) => {
                   value={startDate}
                   onChange={(e) => updateTaskStartDate(e.target.value)}
                 />
-              ) : null}
+              ) : (
+                <p>{startDate}</p>
+              )}
             </div>
           ) : null}
           <div className="d-flex flex-column">
@@ -610,7 +612,7 @@ const Sidebar = (props) => {
               </option>
             </select>
           ) : (
-            <p>{props.task.priority}</p>
+            <p>{TaskAttributes[props.task.priority]}</p>
           )}
         </div>
         <div className={"d-flex flex-column mb-3"}>
