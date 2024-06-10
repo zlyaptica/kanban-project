@@ -6,11 +6,12 @@
 
 .canbanAndActiveSidebar {
     display: grid;
-    grid-template-columns: 80% 20%;
+    grid-template-columns: auto 220px;
     grid-template-rows: 1fr;
 }
 
 .sidebar {
+    overflow: hidden;
     display: none;
     position: fixed;
     right: 0;
@@ -18,9 +19,10 @@
     top: 0;
     bottom: 0;
     width: 0;
+    height: 100%;
     border-left: 2px solid black;
-    min-width: 20%;
-    background-color: #45d7ff;
+    min-width: 220px;
+    z-index: 999;
 }
 
 .sidebarOpen {
@@ -30,4 +32,10 @@
 .boardName {
     margin: 0;
     margin-right: 10px;
+}
+
+@media (max-width: 540px) {
+    .sidebar {
+        min-width: 100%;
+    }
 }
