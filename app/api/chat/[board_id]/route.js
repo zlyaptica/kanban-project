@@ -26,7 +26,8 @@ export async function GET(request, { params }) {
                 text: 1,
                 "authorData._id": 1,
                 "authorData.name": 1,
-                date: 1
+                date: 1,
+                board: 1
             }
         },
 

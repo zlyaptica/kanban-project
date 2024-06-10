@@ -5,6 +5,7 @@ import { io } from "socket.io-client";
 import styles from "@/styles/Chat.module.css"
 
 const socket = io();
+
 function getLocalTime(date) {
   const localTime = new Date(date).toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -30,10 +31,12 @@ const Request = async (msg, reqType) => {
 
 export default function Chat({ params }) {
   const boardID = params.board_id;
+  
+
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const messagesRef = useRef(messages);
   const [editMessage, setEditMessages] = useState({});
+  const messagesRef = useRef(messages);
 
   useEffect(() => {
     async function Get() {
@@ -51,12 +54,10 @@ export default function Chat({ params }) {
     // Create a socket connection
     socket.connect();
     // Listen for incoming messages
-    socket.on("connect", () => { });
+    socket.on("connect", () => {socket.emit("join", boardID)});
     socket.on("broadcastNewMessage", (newMsg) => {
       messagesRef.current = [...messagesRef.current, newMsg];
       setMessages([...messagesRef.current]);
-
-      console.log("newmsg loaded", messagesRef.current);
     });
     socket.on("broadcastDelete", (msg) => {
       console.log("deleteMessage");
