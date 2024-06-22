@@ -27,7 +27,7 @@ export default function Home() {
           className={"linkToSignIn"}
           onClick={() => setSignInPopupActive(true)}
         >
-          <Link href="/">Начать пользоваться</Link>
+          <Link className={""} href="/">Начать пользоваться</Link>
         </h1>
         <Popup active={SignInPopupActive} setActive={setSignInPopupActive}>
           <SignIn

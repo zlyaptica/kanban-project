@@ -76,6 +76,23 @@ input::placeholder {
     margin: auto 0 auto auto;
 }
 
+@media (max-width: 940px) {
+    .main {
+        align-items: center;
+        flex-direction: column-reverse;
+    }
+
+    .description {
+        max-width: 75%;
+        margin: 0;
+    }
+
+    .linkToSignIn {
+        margin: 0;
+        margin-bottom: 15px;
+    }
+}
+
 /* app/workplace/page.js */
 
 .editBoardNameInput {
