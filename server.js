@@ -1,7 +1,7 @@
 const { createServer } = require('http')
 const { parse } = require('url')
 const next = require('next')
-const {Server} = require('socket.io')
+const { Server } = require('socket.io')
 
 const dev = process.env.NODE_ENV !== 'production'
 const hostname = 'localhost'
@@ -9,14 +9,14 @@ const port = 3000
 // when using middleware `hostname` and `port` must be provided below
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
- 
+
 app.prepare().then(() => {
 
   const httpServer = createServer(async (req, res) => {
     try {
       const parsedUrl = parse(req.url, true)
       const { pathname, query } = parsedUrl
- 
+
       if (pathname === '/a') {
         await app.render(req, res, '/a', query)
       } else if (pathname === '/b') {
@@ -33,23 +33,28 @@ app.prepare().then(() => {
   const io = new Server(httpServer);
   io.on("connection", async (socket) => {
     console.log(socket.id)
+    socket.on("join", async (boardID) =>{
+      socket.join(boardID)
+      console.log(socket.rooms)
+    })
     socket.on("newMessage", async (msg) => {
       console.log("newMessage")
-      console.log(msg)
-      socket.broadcast.emit("broadcastNewMessage", msg)
+      console.log(typeof(msg.board))
+      console.log(socket.rooms)
+      socket.broadcast.to(msg.board).emit("broadcastNewMessage", msg);
     });
     socket.on("deleteMessage", async (msg) => {
       console.log("deleteMessage")
       console.log(msg)
-      socket.broadcast.emit("broadcastDelete", msg)
+      socket.broadcast.to(msg.board).emit("broadcastDelete", msg);
     });
     socket.on("updateMessage", async (msg) => {
       console.log("updateMessage")
       console.log(msg)
-      socket.broadcast.emit("broadcastUpdate", msg)
+      socket.broadcast.to(msg.board).emit("broadcastUpdate", msg);
     });
   })
-  
+
   httpServer
     .once('error', (err) => {
       console.error(err)

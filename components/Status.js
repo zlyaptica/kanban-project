@@ -131,9 +131,12 @@ const Status = (props) => {
   if (props.status.type == "DONE") statusColor = styles.bgColorDONE;
 
   useEffect(() => {
-    if (props.user) setUser(props.user);
     if (props.status) setStatus(props.status)
-  }, [props.status, props.user]);
+  }, [props.status])
+
+  useEffect(() => {
+    if (props.user) setUser(props.user);
+  }, [props.user]);
 
   return (
     <div className={styles.statusBlock + " " + statusColor}>

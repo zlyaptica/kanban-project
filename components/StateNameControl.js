@@ -18,8 +18,8 @@ const StateNameControl = (props) => {
       setIsActiveInput(false);
       setInputValue("");
       if (
-        props.status == Status.updateStateName ||
-        props.status == Status.updateTaskName
+        props.status == Action.updateStateName ||
+        props.status == Action.updateTaskName
       ) {
         setInputValue(props.stateName);
       }

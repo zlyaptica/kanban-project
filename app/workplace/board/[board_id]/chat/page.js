@@ -3,8 +3,12 @@
 import { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 import styles from "@/styles/Chat.module.css"
+import deleteIcon from "@/public/deleteIcon.svg"
+import editIcon from "@/public/editIcon.svg"
+import Image from 'next/image';
 
 const socket = io();
+
 function getLocalTime(date) {
   const localTime = new Date(date).toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -30,10 +34,12 @@ const Request = async (msg, reqType) => {
 
 export default function Chat({ params }) {
   const boardID = params.board_id;
+
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const messagesRef = useRef(messages);
   const [editMessage, setEditMessages] = useState({});
+  const [currentUser, setCurrentUser] = useState({})
+  const messagesRef = useRef(messages);
 
   useEffect(() => {
     async function Get() {
@@ -43,6 +49,8 @@ export default function Chat({ params }) {
       setMessages((current) => [...current, ...resJson]);
       messagesRef.current = [...messagesRef.current, ...resJson];
     }
+    setCurrentUser(JSON.parse(localStorage.getItem("user")));
+    console.log(currentUser._id)
     const isAuthenticatedUser = localStorage.getItem("isAuthenticatedUser");
     if (isAuthenticatedUser) {
       Get();
@@ -51,12 +59,10 @@ export default function Chat({ params }) {
     // Create a socket connection
     socket.connect();
     // Listen for incoming messages
-    socket.on("connect", () => { });
+    socket.on("connect", () => { socket.emit("join", boardID) });
     socket.on("broadcastNewMessage", (newMsg) => {
       messagesRef.current = [...messagesRef.current, newMsg];
       setMessages([...messagesRef.current]);
-
-      console.log("newmsg loaded", messagesRef.current);
     });
     socket.on("broadcastDelete", (msg) => {
       console.log("deleteMessage");
@@ -88,7 +94,6 @@ export default function Chat({ params }) {
 
   const handleBtnClick = () => {
     if (newMessage != "") {
-      const currentUser = JSON.parse(localStorage.getItem("user"));
       let Msg = {
         text: newMessage,
         authorData: { _id: currentUser._id, name: currentUser.name },
@@ -110,10 +115,10 @@ export default function Chat({ params }) {
     Request(message, "DELETE").then((result) => {
       if ((result.status = 200)) {
         console.log(message)
-        
+
         socket.emit("deleteMessage", messagesRef.current.find((el) => {
-            return el._id == message._id;
-          })
+          return el._id == message._id;
+        })
         );
         messagesRef.current = messagesRef.current.filter((el) => {
           return el._id != message._id;
@@ -156,27 +161,32 @@ export default function Chat({ params }) {
               <div className="ms-2 me-auto">
                 <div>
                   <span className="fw-bold">{message.authorData.name} </span>
+                  {(currentUser._id == message.authorData._id) ? (
+                    <Image
+                      src={deleteIcon}
+                      className={styles.ImgBtn}
+                      height={15}
+                      width={15}
+                      onClick={() => {
+                        deleteBtnClick(message);
+                      }}
+                    />
+                  ) : null}
+                  {(currentUser._id == message.authorData._id) ? (
+                    <Image
+                      src={editIcon}
+                      className={styles.ImgBtn}
+                      height={15}
+                      width={15}
+                      onClick={() => {
+                        setEditMessages(message);
+                      }}
+                    />
+                  ) : null}
                   <span className="fw-lighter">
                     {getLocalTime(message.date)}
                   </span>
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-sm pull-right float-end mx-1"
-                    onClick={() => {
-                      deleteBtnClick(message);
-                    }}
-                  >
-                    Удалить
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-sm pull-right float-end mx-1"
-                    onClick={() => {
-                      setEditMessages(message);
-                    }}
-                  >
-                    Редактировать
-                  </button>
+
                 </div>
                 {message.text}
               </div>
@@ -195,8 +205,11 @@ export default function Chat({ params }) {
           ></textarea>
         </div>
         <div>
-          <button type="button" onClick={handleBtnClick}>
-            отправить
+          <button 
+          type="button" 
+          className="btn btn-primary btn-sm"
+          onClick={handleBtnClick}>
+            Отправить
           </button>
         </div>
       </div>
@@ -213,18 +226,18 @@ export default function Chat({ params }) {
         <div>
           <button
             type="button"
-            className={styles.SubmBtn}
+            className="btn btn-primary btn-sm"
             onClick={handleEditBtnClick}>
             Редактировать
           </button>
           <button
             type="button"
-            className= {styles.SubmBtn}
+            className="btn btn-primary btn-sm mx-1"
             onClick={() => {
               setEditMessages({});
             }}
           >
-            отмена
+            Отмена
           </button>
         </div>
       </div>

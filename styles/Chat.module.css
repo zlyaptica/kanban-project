@@ -1,8 +1,9 @@
 .TextareaClass {
     resize: none;
+    width:100%;
+    margin-top: 5px;
   }
-.SubmBtn{
-  padding-left: 2px;
-  padding-right: 2px;
-  margin-right: 2px;
+.ImgBtn{
+  cursor: pointer;
+  margin-left: 1px;
 }

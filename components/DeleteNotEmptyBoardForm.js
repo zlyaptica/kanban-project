@@ -32,18 +32,21 @@ const DeleteNotEmptyBoard = (props) => {
   };
 
   const deleteStatus = async (deleteWay) => {
-    const response = await fetch(`/api/board/${props.boardID}/statuses/${props.data._id}`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=utf-8",
-      },
-      body: JSON.stringify({
-        author_id: props.user._id,
-        is_save_tasks: deleteWay == 1 ? true : false, // если путь 1, то мы сохраняем задачи
-      }),
-    });
-    const data = await response.json()
+    const response = await fetch(
+      `/api/board/${props.boardID}/statuses/${props.data._id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({
+          author_id: props.user._id,
+          is_save_tasks: deleteWay == 1 ? true : false, // если путь 1, то мы сохраняем задачи
+        }),
+      }
+    );
+    const data = await response.json();
     props.setStatuses(data.boardData);
     props.setActive(false);
   };

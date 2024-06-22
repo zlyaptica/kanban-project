@@ -18,7 +18,6 @@ export async function PUT(request, Response) {
     await message.save().then(result => { resultMessage = result });
     let messageID = String(resultMessage._id)
     console.log(messageID)
-
     return (NextResponse.json({ status: 200, messageID }))
 }
 export async function DELETE(request, Response) {

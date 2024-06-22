@@ -434,7 +434,7 @@ export default function Board({ params }) {
               </div>
             ))}
           {isAdmin ? (
-            <div className={"p-2 m-2"}>
+            <div className={styles.createStatus + ' ' + "p-2 m-2"}>
               <StateNameControl
                 action={Action.createState}
                 isAdmin={isAdmin}
